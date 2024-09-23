@@ -58,6 +58,13 @@ export function useLottie(options) {
       playAnimation(player, anim, force);
     },
   };
+
+  api.findElem().oncontextmenu = (event) => {
+    event.preventDefault();
+    event.stopPropagation();
+    return false;
+  };
+
   return api;
 }
 
