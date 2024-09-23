@@ -27,7 +27,7 @@ player.addEventListener("DOMLoaded", () => {
     }
   };
 
-  findElem(".heart").onpointerup = () => {
+  findElem().onpointerup = () => {
     if (isPlaying(ACT.holding, ACT.holdingLoop)) play(ACT.release);
     else if (isPlaying(ACT.activeHolding)) play(ACT.activeReleased);
   };
