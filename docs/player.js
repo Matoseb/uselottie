@@ -104,11 +104,13 @@ export function findElem(selector, parent = document) {
 }
 
 // SOUND
+
 class SustainHowl extends Howl {
   constructor(options) {
     super(options);
     this.isPlaying = false;
     super.on("end", () => {
+
       // this.isPlaying = false;
     });
   }
