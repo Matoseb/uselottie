@@ -16,6 +16,12 @@ body {
   max-width: 10rem;
 }
 
+/* prevent zoom */
+* {
+  touch-action: manipulation;
+  box-sizing: border-box;
+}
+
 svg {
   overflow: visible;
 }
