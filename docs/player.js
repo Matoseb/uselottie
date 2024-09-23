@@ -5,6 +5,7 @@ import "https://cdnjs.cloudflare.com/ajax/libs/lottie-web/5.12.2/lottie.min.js";
 export function useLottie(options) {
   let animation;
 
+  console.log(Howler);
   const { debug = false, ...lottieOptions } = options;
 
   const player = lottie.loadAnimation({
@@ -12,7 +13,7 @@ export function useLottie(options) {
     loop: false, // Set looping to true
     autoplay: false, // Set to true for autoplaying the animation
     audioFactory(assetPath) {
-      const audio = new SustainHowl({
+      const audio = new Howl({
         src: assetPath,
         preload: true,
       });
