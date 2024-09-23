@@ -1,7 +1,6 @@
 import "https://cdnjs.cloudflare.com/ajax/libs/howler/2.2.0/howler.min.js";
 import "https://cdnjs.cloudflare.com/ajax/libs/lottie-web/5.12.2/lottie.min.js";
 
-
 // LOTTIE
 export function useLottie(options) {
   let animation;
@@ -15,6 +14,7 @@ export function useLottie(options) {
     audioFactory(assetPath) {
       const audio = new SustainHowl({
         src: assetPath,
+        html5: true,
         preload: true,
       });
       return audio;
@@ -61,7 +61,7 @@ export function useLottie(options) {
     },
   };
 
-  api.findElem().oncontextmenu = (event) => {
+  window.oncontextmenu = (event) => {
     event.preventDefault();
     event.stopPropagation();
     return false;
