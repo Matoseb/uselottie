@@ -1,7 +1,7 @@
 import { useLottie } from "../player.js";
 
 const ACT = Object.freeze({
-  idle: "start",
+  idle: "active-release-end",
   holding: "start, hold",
   holdingLoop: "hold, hold-end",
   release: "hold-end, release-end",
