@@ -1,4 +1,4 @@
-import { useLottie } from "/player.js";
+import { useLottie } from "../player.js";
 
 const ACT = Object.freeze({
   idle: "start",

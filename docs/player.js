@@ -27,6 +27,11 @@ export function useLottie(options) {
   });
 
   let currFrame = Infinity;
+
+  player.addEventListener("DOMLoaded", () => {
+    document.title = firstCap(player.fileName);
+  });
+
   player.addEventListener("segmentStart", (event) => {
     const hasReset = event.firstFrame < currFrame;
     currFrame = event.firstFrame;
@@ -114,4 +119,8 @@ class SustainHowl extends Howl {
     // this.pause();
     // super.seek(0);
   }
+}
+
+function firstCap(string) {
+  return string.charAt(0).toUpperCase() + string.slice(1);
 }
