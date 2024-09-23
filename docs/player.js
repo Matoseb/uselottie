@@ -1,19 +1,21 @@
 import "https://cdnjs.cloudflare.com/ajax/libs/howler/2.2.0/howler.min.js";
 import "https://cdnjs.cloudflare.com/ajax/libs/lottie-web/5.12.2/lottie.min.js";
+import "https://cdnjs.cloudflare.com/ajax/libs/eruda/3.3.0/eruda.min.js"
 
 // LOTTIE
 export function useLottie(options) {
   let animation;
 
-  console.log(Howler);
   const { debug = false, ...lottieOptions } = options;
+
+  if(debug) eruda.init();
 
   const player = lottie.loadAnimation({
     renderer: "svg", // Render method ('svg', 'canvas', or 'html')
     loop: false, // Set looping to true
     autoplay: false, // Set to true for autoplaying the animation
     audioFactory(assetPath) {
-      const audio = new Howl({
+      const audio = new SustainHowl({
         src: assetPath,
         preload: true,
       });
