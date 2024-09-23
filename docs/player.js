@@ -1,6 +1,6 @@
 import "https://cdnjs.cloudflare.com/ajax/libs/howler/2.2.0/howler.min.js";
 import "https://cdnjs.cloudflare.com/ajax/libs/lottie-web/5.12.2/lottie.min.js";
-import "https://cdnjs.cloudflare.com/ajax/libs/eruda/3.3.0/eruda.min.js"
+import "https://cdnjs.cloudflare.com/ajax/libs/eruda/3.3.0/eruda.min.js";
 
 // LOTTIE
 export function useLottie(options) {
@@ -8,7 +8,7 @@ export function useLottie(options) {
 
   const { debug = false, ...lottieOptions } = options;
 
-  if(debug) eruda.init();
+  if (debug) eruda.init();
 
   const player = lottie.loadAnimation({
     renderer: "svg", // Render method ('svg', 'canvas', or 'html')
@@ -30,10 +30,6 @@ export function useLottie(options) {
   });
 
   let currFrame = Infinity;
-
-  player.addEventListener("DOMLoaded", () => {
-    document.title = firstCap(player.fileName);
-  });
 
   player.addEventListener("segmentStart", (event) => {
     const hasReset = event.firstFrame < currFrame;
@@ -72,6 +68,14 @@ export function useLottie(options) {
     event.stopPropagation();
     return false;
   };
+
+  player.addEventListener("DOMLoaded", () => {
+    document.title = firstCap(player.fileName);
+
+    api.findElem().onclick = () => {
+      Howler._unlockAudio();
+    };
+  });
 
   return api;
 }
