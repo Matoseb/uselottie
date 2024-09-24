@@ -15,7 +15,7 @@ export function useLottie(options) {
       const audio = new SustainHowl({
         src: assetPath,
         html5: true,
-        preload: true,
+        // preload: true,
       });
       return audio;
     },
@@ -40,6 +40,12 @@ export function useLottie(options) {
 
   const api = {
     player,
+    onComplete(callback) {
+      return player.addEventListener("complete", callback);
+    },
+    onLoad(callback) {
+      return player.addEventListener("DOMLoaded", callback);
+    },
     findElem(selector, parent) {
       parent = parent || player.renderer.svgElement;
       if (!selector) return parent;
@@ -55,7 +61,7 @@ export function useLottie(options) {
       animation = anim;
       api.findElem().dataset.animation = anim;
       player.loop = loop;
-      // if (debug) console.log("playing:", anim);
+      if (debug) console.log("playing:", anim);
 
       playAnimation(player, anim, force);
     },
@@ -73,6 +79,32 @@ export function useLottie(options) {
     api.findElem().onclick = () => {
       Howler._unlockAudio();
     };
+  });
+
+  let oldFrame = Infinity;
+  player.addEventListener("enterFrame", (event) => {
+    if (event.direction !== 1) return;
+    if (player.isPaused) return;
+
+    const audios = player.audioController.audios;
+
+    const frame = player.firstFrame + player.currentFrame;
+    // console.log(frame);
+
+    // console.log(audios);
+
+    audios.forEach(({ audio, data }) => {
+      const { st } = data;
+
+      if (st <= frame && st > oldFrame) {
+        const dtFrame = frame - st;
+        const dtTime = dtFrame / player.frameRate;
+        audio.manualSeek(dtTime);
+        audio.manualPlay();
+      }
+    });
+
+    oldFrame = frame;
   });
 
   return api;
@@ -110,19 +142,25 @@ class SustainHowl extends Howl {
     super(options);
     this.isPlaying = false;
     super.on("end", () => {
-
       // this.isPlaying = false;
     });
   }
 
   play() {
-    if (this.isPlaying) return;
-    this.isPlaying = true;
+    // if (this.isPlaying) return;
+    // this.isPlaying = true;
+    // super.play();
+  }
+  manualSeek(value) {
+    super.seek(value);
+  }
+  manualPlay() {
     super.play();
   }
+  seek() {}
   pause() {}
   reset() {
-    this.isPlaying = false;
+    // this.isPlaying = false;
     // this.pause();
     // super.seek(0);
   }

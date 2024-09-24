@@ -1,38 +1,42 @@
 import { useLottie } from "../player.js";
 
-const ACT = Object.freeze({
+const ACTION = Object.freeze({
   idle: "active-release-end",
   holding: "start, hold",
   holdingLoop: "hold, hold-end",
   release: "hold-end, release-end",
-
   activeHolding: "active-hold, active-release",
   activeReleased: "active-release, active-release-end",
 });
 
-const { player, isPlaying, play, findElem } = useLottie({
+const { isPlaying, play, findElem, onLoad, onComplete } = useLottie({
   path: "animation/heart.json",
   container: ".lottie",
   debug: true,
 });
 
-player.addEventListener("DOMLoaded", () => {
-  play(ACT.idle);
+onLoad(() => {
+  play(ACTION.idle);
 
   findElem(".heart").onpointerdown = () => {
-    if (isPlaying(ACT.release)) {
-      play(ACT.activeHolding);
+    if (isPlaying(ACTION.release)) {
+      play(ACTION.activeHolding);
     } else {
-      play(ACT.holding);
+      play(ACTION.holding);
     }
   };
 
   findElem().onpointerup = () => {
-    if (isPlaying(ACT.holding, ACT.holdingLoop)) play(ACT.release);
-    else if (isPlaying(ACT.activeHolding)) play(ACT.activeReleased);
+    if (isPlaying(ACTION.holding, ACTION.holdingLoop)) {
+      play(ACTION.release);
+    } else if (isPlaying(ACTION.activeHolding)) {
+      play(ACTION.activeReleased);
+    }
   };
 });
 
-player.addEventListener("complete", () => {
-  if (isPlaying(ACT.holding)) play(ACT.holdingLoop, { loop: true });
+onComplete(() => {
+  if (isPlaying(ACTION.holding)) {
+    play(ACTION.holdingLoop, { loop: true });
+  }
 });
