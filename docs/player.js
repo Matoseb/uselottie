@@ -5,7 +5,11 @@ import "https://cdnjs.cloudflare.com/ajax/libs/lottie-web/5.12.2/lottie.min.js";
 export function useLottie(options) {
   let animation;
 
-  const { debug = false, ...lottieOptions } = options;
+  const {
+    debug = false,
+    variations = { rate: 0.1, volume: 0.1 },
+    ...lottieOptions
+  } = options;
 
   const player = lottie.loadAnimation({
     renderer: "svg", // Render method ('svg', 'canvas', or 'html')
@@ -14,7 +18,7 @@ export function useLottie(options) {
     audioFactory(assetPath) {
       const audio = new SustainHowl({
         src: assetPath,
-        html5: true,
+        // html5: true,
         // preload: true,
       });
       return audio;
@@ -27,16 +31,15 @@ export function useLottie(options) {
         : options.container,
   });
 
-  let currFrame = Infinity;
-
-  player.addEventListener("segmentStart", (event) => {
-    const hasReset = event.firstFrame < currFrame;
-    currFrame = event.firstFrame;
-    if (!hasReset) return;
-    player.audioController.audios.forEach(({ audio }) => {
-      audio.reset?.();
-    });
-  });
+  // let currFrame = Infinity;
+  // player.addEventListener("segmentStart", (event) => {
+  //   const hasReset = event.firstFrame < currFrame;
+  //   currFrame = event.firstFrame;
+  //   if (!hasReset) return;
+  //   player.audioController.audios.forEach(({ audio }) => {
+  //     audio.reset?.();
+  //   });
+  // });
 
   const api = {
     player,
@@ -45,6 +48,9 @@ export function useLottie(options) {
     },
     onLoad(callback) {
       return player.addEventListener("DOMLoaded", callback);
+    },
+    onAudio(callback) {
+      return player.addEventListener("audio", callback);
     },
     findElem(selector, parent) {
       parent = parent || player.renderer.svgElement;
@@ -86,8 +92,7 @@ export function useLottie(options) {
     if (event.direction !== 1) return;
     if (player.isPaused) return;
 
-    const audios = player.audioController.audios;
-
+    const { audios } = player.audioController;
     const frame = player.firstFrame + player.currentFrame;
     // console.log(frame);
 
@@ -99,8 +104,13 @@ export function useLottie(options) {
       if (st <= frame && st > oldFrame) {
         const dtFrame = frame - st;
         const dtTime = dtFrame / player.frameRate;
+        const rate = variations.rate * 0.5;
+        audio.manualRate(random(1 - rate, 1 + rate));
+        audio.manualVolume(random(1 - variations.volume, 1));
         audio.manualSeek(dtTime);
-        audio.manualPlay();
+        const event = { audios, audio, data, willPlay: true };
+        player.triggerEvent("audio", event);
+        if (event.willPlay) audio.manualPlay();
       }
     });
 
@@ -135,6 +145,11 @@ export function findElem(selector, parent = document) {
   return parent.querySelector(selector);
 }
 
+// random range
+export function random(min, max) {
+  return Math.random() * (max - min) + min;
+}
+
 // SOUND
 
 class SustainHowl extends Howl {
@@ -146,23 +161,32 @@ class SustainHowl extends Howl {
     });
   }
 
-  play() {
-    // if (this.isPlaying) return;
-    // this.isPlaying = true;
-    // super.play();
-  }
   manualSeek(value) {
     super.seek(value);
   }
   manualPlay() {
     super.play();
   }
+  manualRate(value) {
+    super.rate(value);
+  }
+  manualVolume(value) {
+    super.volume(value);
+  }
+  playing() {}
+  rate() {}
+  setVolume(value) {}
   seek() {}
   pause() {}
+  play() {
+    // if (this.isPlaying) return;
+    // this.isPlaying = true;
+    // super.play();
+  }
   reset() {
-    // this.isPlaying = false;
-    // this.pause();
-    // super.seek(0);
+    //   this.isPlaying = false;
+    //   this.pause();
+    //   super.seek(0);
   }
 }
 
