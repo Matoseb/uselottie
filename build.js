@@ -16,7 +16,7 @@ const sharedConfig = {
   entryPoints: [ENTRY],
   bundle: true,
   minify: true,
-  keepNames: true,
+  keepNames: false,
   sourcemap: true,
   treeShaking: true,
   outdir: OUT_DIR,
