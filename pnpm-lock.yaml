@@ -24,9 +24,6 @@ importers:
       esbuild-node-externals:
         specifier: ^1.14.0
         version: 1.14.0(esbuild@0.24.0)
-      esbuild-plugin-tsc:
-        specifier: ^0.4.0
-        version: 0.4.0(typescript@5.6.2)
       esbuild-sass-plugin:
         specifier: ^3.3.1
         version: 3.3.1(esbuild@0.24.0)(sass-embedded@1.79.3)
@@ -571,11 +568,6 @@ packages:
     peerDependencies:
       esbuild: 0.12 - 0.23
 
-  esbuild-plugin-tsc@0.4.0:
-    resolution: {integrity: sha512-q9gWIovt1nkwchMLc2zhyksaiHOv3kDK4b0AUol8lkMCRhJ1zavgfb2fad6BKp7FT9rh/OHmEBXVjczLoi/0yw==}
-    peerDependencies:
-      typescript: ^4.0.0 || ^5.0.0
-
   esbuild-sass-plugin@3.3.1:
     resolution: {integrity: sha512-SnO1ls+d52n6j8gRRpjexXI8MsHEaumS0IdDHaYM29Y6gakzZYMls6i9ql9+AWMSQk/eryndmUpXEgT34QrX1A==}
     peerDependencies:
@@ -1091,10 +1083,6 @@ packages:
     resolution: {integrity: sha512-iq6eVVI64nQQTRYq2KtEg2d2uU7LElhTJwsH4YzIHZshxlgZms/wIc4VoDQTlG/IvVIrBKG06CrZnp0qv7hkcQ==}
     engines: {node: '>=12'}
 
-  strip-comments@2.0.1:
-    resolution: {integrity: sha512-ZprKx+bBLXv067WTCALv8SSz5l2+XhpYCsVtSqlMnkAXMWDq+/ekVbl1ghqP9rUHTzv6sm/DwCOiYutU/yp1fw==}
-    engines: {node: '>=10'}
-
   supports-color@5.5.0:
     resolution: {integrity: sha512-QjVjwdXIt408MIiAqCX4oUKsgU2EqAGzs2Ppkm4aQYbjm+ZEWEcW4SfFNTr4uMNZma0ey4f5lgLrkB0aX0QMow==}
     engines: {node: '>=4'}
@@ -1550,11 +1538,6 @@ snapshots:
       esbuild: 0.24.0
       find-up: 5.0.0
       tslib: 2.7.0
-
-  esbuild-plugin-tsc@0.4.0(typescript@5.6.2):
-    dependencies:
-      strip-comments: 2.0.1
-      typescript: 5.6.2
 
   esbuild-sass-plugin@3.3.1(esbuild@0.24.0)(sass-embedded@1.79.3):
     dependencies:
@@ -2072,8 +2055,6 @@ snapshots:
   strip-ansi@7.1.0:
     dependencies:
       ansi-regex: 6.1.0
-
-  strip-comments@2.0.1: {}
 
   supports-color@5.5.0:
     dependencies:
