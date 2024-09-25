@@ -8,15 +8,20 @@
   "version": "0.0.0",
   "description": "Wrapper for lottie web",
   "main": "build/index.js",
+  "files": [
+    "build"
+  ],
   "type": "module",
   "scripts": {
     "dev": "vite",
-    "build": "node build.js",
+    "build:lib": "rm -rf build && node build.js && tsc",
     "build:pages": "tsc && vite build",
+    "build": "npm run build:lib && npm run build:pages",
     "preview": "vite preview"
   },
   "devDependencies": {
     "esbuild": "0.24.0",
+    "esbuild-node-externals": "^1.14.0",
     "prettier": "3.3.3",
     "rollup-plugin-cleanup": "^3.2.1",
     "sass": "^1.79.3",

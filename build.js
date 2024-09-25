@@ -1,14 +1,30 @@
 import * as esbuild from "esbuild";
 import { sassPlugin } from "esbuild-sass-plugin";
+import { nodeExternalsPlugin } from "esbuild-node-externals";
+import path from "path";
 
-await esbuild.build({
+const sharedConfig = {
   entryPoints: ["./src/uselottie/index.ts"],
   bundle: true,
   minify: true,
-//   outfile: "uselottie.js",
+  treeShaking: true,
+  outdir: "./build",
+  plugins: [
+    sassPlugin({
+      type: "css-text",
+    }),
+  ],
+};
 
-  outdir: "./build/",
-  plugins: [sassPlugin({
-    type: "css-text",
-  })],
+await esbuild.build({
+  ...sharedConfig,
+  platform: "node",
+  format: "cjs",
+  target: "node14",
+  plugins: [...sharedConfig.plugins, nodeExternalsPlugin()],
+});
+
+await esbuild.build({
+  ...sharedConfig,
+  outdir: path.join(sharedConfig.outdir, "bundle"),
 });
