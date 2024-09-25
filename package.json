@@ -8,7 +8,7 @@
   "private": false,
   "version": "0.0.0",
   "description": "Wrapper for lottie web",
-  "main": "dist/index.js",
+  "main": "build/index.js",
   "type": "module",
   "scripts": {
     "dev": "vite",
