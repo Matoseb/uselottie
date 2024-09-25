@@ -2,28 +2,33 @@
 <html lang="en">
   <head>
     <meta charset="UTF-8" />
-    <meta
-      name="viewport"
-      content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no"
-    />
-    <title>Lottie Animation</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Lottie</title>
     <style>
+      body {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        height: 100dvh;
+        overflow: hidden;
+        margin: 0;
+        background-color: white;
+        padding: 1rem;
+        box-sizing: border-box;
+      }
+
+      .lottie {
+        width: 100%;
+        height: 100%;
+        max-width: 30vmin;
+      }
+
       .heart {
         cursor: pointer;
       }
 
-      .heart-fill:hover {
-        /* fill: #565656; */
-      }
-/* 
-      [data-animation*="active-release-end"] .heart-stroke:hover,
-      [data-animation*="release-end"] .heart-stroke:hover {
-        stroke: #474747;
-      } */
     </style>
-    <!-- <script type="module" src="toggle.js"></script> -->
-    <link rel="stylesheet" href="../player.css" />
-    <script type="module" src="./main.js"></script>
+    <script type="module" crossorigin src="./heart.js"></script>
   </head>
   <body>
     <div class="lottie"></div>
