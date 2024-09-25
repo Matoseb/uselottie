@@ -37,7 +37,7 @@ jobs:
           git config --local user.email "myEmail"
           git config --local user.name "myUsername"
           pnpm version --new-version ${{github.event.inputs.release}} --no-git-tag-version
-          pnpm publish --access public
+          pnpm publish --no-git-checks --access public
           PACKAGE_VERSION=$(node -p "require('./package.json').version")
           git commit -a -m "v${PACKAGE_VERSION}"
           git push
