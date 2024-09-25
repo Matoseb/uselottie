@@ -5,6 +5,7 @@
     "module": "ESNext",
     "lib": ["ES2020", "DOM", "DOM.Iterable"],
     "skipLibCheck": true,
+    "allowJs": true,
 
     /* Bundler mode */
     "moduleResolution": "bundler",
@@ -17,7 +18,14 @@
     "strict": true,
     "noUnusedLocals": true,
     "noUnusedParameters": true,
-    "noFallthroughCasesInSwitch": true
+    "noFallthroughCasesInSwitch": true,
+    // "baseUrl": ".",
+
+    "paths": {
+      "@matoseb/uselottie": ["./src/uselottie"]
+    }
   },
-  "include": ["src"]
+  "include": ["**/*.ts", "**/*.js"],
+  "exclude": ["build", "node_modules", "dist"]
 }
+// https://stackoverflow.com/questions/70072923/why-does-vscode-not-pick-up-path-aliases-in-tsconfig

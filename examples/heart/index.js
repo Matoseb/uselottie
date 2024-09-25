@@ -1,4 +1,4 @@
-import useLottie from "uselottie";
+import useLottie from "@matoseb/uselottie";
 
 const ACTION = {
   idle: "active-release-end",

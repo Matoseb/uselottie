@@ -1,11 +1,14 @@
 import { defineConfig } from "vite";
+import tsconfigPaths from "vite-tsconfig-paths";
+
 import cleanup from "rollup-plugin-cleanup";
 import path from "path";
 import fs from "fs";
 
 const OUT_DIR = "dist";
 const IN_DIR = "examples";
-const USELOTTIE_URL = "https://unpkg.com/@matoseb/uselottie/build/bundle/index.js";
+const USELOTTIE_URL =
+  "https://unpkg.com/@matoseb/uselottie/build/bundle/index.js";
 
 const isDev = process.env.NODE_ENV === "development";
 
@@ -27,6 +30,7 @@ function getHtmlEntries(root = IN_DIR) {
   return entries;
 }
 
+/** @type {import('vite').UserConfig} */
 export default defineConfig({
   root: IN_DIR,
   base: "./",
@@ -37,11 +41,11 @@ export default defineConfig({
     minify: false,
 
     rollupOptions: {
-      external: ["uselottie"],
+      external: ["@matoseb/uselottie"],
       input: getHtmlEntries(),
       output: {
         paths: {
-          uselottie: USELOTTIE_URL,
+          "@matoseb/uselottie": USELOTTIE_URL,
         },
         manualChunks: {},
         entryFileNames: "[name]/[name].js",
@@ -65,9 +69,12 @@ export default defineConfig({
       }
     },
   },
-  resolve: {
-    alias: {
-      "uselottie": path.resolve(__dirname, "src/uselottie"),
+  plugins: [tsconfigPaths()],
+  css: {
+    preprocessorOptions: {
+      scss: {
+        api: "modern-compiler", // or "modern", "legacy"
+      },
     },
   },
 });
