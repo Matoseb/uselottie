@@ -36,8 +36,8 @@ jobs:
         env:
           NODE_AUTH_TOKEN: ${{secrets.NPM_TOKEN}}
         run: |
-          git config --local user.email "myEmail"
-          git config --local user.name "myUsername"
+          git config --local user.email "contact@matoseb.com"
+          git config --local user.name "npm-publish"
           pnpm version --new-version ${{github.event.inputs.release}} --no-git-tag-version
           pnpm publish --no-git-checks --access public
           PACKAGE_VERSION=$(node -p "require('./package.json').version")
