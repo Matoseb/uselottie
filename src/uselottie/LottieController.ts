@@ -4,6 +4,7 @@ import styleContent from "./index.scss?inline";
 
 import {
   getElem,
+  getElems,
   firstCap,
   playAnimation,
   random,
@@ -27,6 +28,7 @@ type Callback = (event: any) => void;
 
 export default class LottieController {
   animation: string | null = null;
+  container: Element | null = null;
   player: CompleteAnimationItem;
   debug: boolean = false;
   volumeVariation: number;
@@ -46,7 +48,6 @@ export default class LottieController {
     this.volumeVariation = volumeVariation;
     this.rateVariation = rateVariation;
 
-
     if (injectCSS) {
       let style = document.querySelector("style[data-type=lottie-controller]");
       if (!style) {
@@ -57,6 +58,17 @@ export default class LottieController {
       }
     }
     // let animation;
+
+    this.container =
+      typeof options.container === "string"
+        ? (() => {
+            const elem = getElem(options.container);
+            if (!elem) {
+              throw new Error(`Element not found: ${options.container}`);
+            }
+            return elem;
+          })()
+        : options.container || document.body;
 
     this.player = lottie.loadAnimation({
       renderer: "svg", // Render method ('svg', 'canvas', or 'html')
@@ -73,25 +85,18 @@ export default class LottieController {
       },
       ...lottieOptions,
 
-      container:
-        typeof options.container === "string"
-          ? (() => {
-              const elem = getElem(options.container);
-              if (!elem) {
-                throw new Error(`Element not found: ${options.container}`);
-              }
-              return elem;
-            })()
-          : options.container || document.body,
+      container: this.container,
     }) as unknown as CompleteAnimationItem;
 
     this.player.addEventListener("DOMLoaded", () => {
-      document.title = firstCap(this.player.fileName);
+      const { fileName } = this.player;
+      document.title = firstCap(fileName);
 
-      const container = this.getElem();
+      const container = this.getElem() as HTMLElement;
       if (!container) return;
       // Disable right click
 
+      container.dataset.filename = this.player.fileName;
       container.classList.add("lottie-controller");
       container.addEventListener(
         "contextmenu",
@@ -136,38 +141,42 @@ export default class LottieController {
 
   onComplete = (callback: Callback) => {
     return this.player.addEventListener("complete", callback);
-  }
+  };
   onLoad = (callback: Callback) => {
     return this.player.addEventListener("DOMLoaded", callback);
-  }
+  };
   onAudio = (callback: Callback) => {
     return this.player.addEventListener("audio", callback);
-  }
-  getElem = (selector?: string | null, parent?: Element) => {
+  };
+  getElem = (selector?: string | null, parent?: Element | null) => {
     parent ||= this.player.renderer.svgElement;
+    // parent ||= this.container;
     if (!selector) return parent;
-    return getElem(selector, parent);
-  }
+    return getElem(selector, parent || undefined);
+  };
+  getElems = (selector: string, parent?: Element | null) => {
+    parent ||= this.player.renderer.svgElement;
+    return getElems(selector, parent || undefined);
+  };
   isPlaying = (...acts: string[]) => {
     return this.animation !== null && acts.includes(this.animation);
-  }
+  };
   currentAnimation = () => {
     return this.animation;
-  }
+  };
   play = (anim: string, { loop = false, force = true } = {}) => {
     this.animation = anim;
-    const container = this.getElem();
 
-    if (container && container instanceof HTMLElement)
-      container.dataset.animation = anim;
+    const container = this.getElem() as HTMLElement;
+    if (container) container.dataset.animation = anim;
 
     this.player.loop = loop;
     if (this.debug) console.log("playing:", anim);
 
     playAnimation(this.player, anim, force);
-  }
+  };
 
   destroy = () => {
     this.player.destroy();
-  }
+  };
 }

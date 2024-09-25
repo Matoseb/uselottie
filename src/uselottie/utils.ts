@@ -105,6 +105,12 @@ export function getElem(
 ) {
   return parent.querySelector(selector);
 }
+export function getElems(
+  selector: string,
+  parent: Element | Document = document
+) {
+  return Array.from(parent.querySelectorAll(selector));
+}
 
 // math
 export function random(min: number, max: number) {
