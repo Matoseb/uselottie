@@ -5,7 +5,7 @@ import fs from "fs";
 
 const OUT_DIR = "dist";
 const IN_DIR = "examples";
-const USELOTTIE_URL = "https://toggle.matoseb.com/dist/index.js";
+const USELOTTIE_URL = "https://unpkg.com/@matoseb/uselottie/build/bundle/index.js";
 
 const isDev = process.env.NODE_ENV === "development";
 
