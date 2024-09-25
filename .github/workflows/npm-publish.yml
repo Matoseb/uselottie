@@ -11,6 +11,8 @@ on:
           - major
           - minor
           - patch
+permissions:
+  contents: write
 jobs:
   publish-new-version:
     runs-on: ubuntu-latest
