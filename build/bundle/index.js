@@ -18582,39 +18582,6 @@ var require_howler = __commonJS({
 // src/uselottie/LottieController.ts
 var import_lottie_web = __toESM(require_lottie(), 1);
 
-// node_modules/.pnpm/auto-bind@5.0.1/node_modules/auto-bind/index.js
-var getAllProperties = (object) => {
-  const properties = /* @__PURE__ */ new Set();
-  do {
-    for (const key2 of Reflect.ownKeys(object)) {
-      properties.add([object, key2]);
-    }
-  } while ((object = Reflect.getPrototypeOf(object)) && object !== Object.prototype);
-  return properties;
-};
-function autoBind(self2, { include, exclude } = {}) {
-  const filter = (key2) => {
-    const match = (pattern) => typeof pattern === "string" ? key2 === pattern : pattern.test(key2);
-    if (include) {
-      return include.some(match);
-    }
-    if (exclude) {
-      return !exclude.some(match);
-    }
-    return true;
-  };
-  for (const [object, key2] of getAllProperties(self2.constructor.prototype)) {
-    if (key2 === "constructor" || !filter(key2)) {
-      continue;
-    }
-    const descriptor = Reflect.getOwnPropertyDescriptor(object, key2);
-    if (descriptor && typeof descriptor.value === "function") {
-      self2[key2] = self2[key2].bind(self2);
-    }
-  }
-  return self2;
-}
-
 // src/uselottie/SustainHowl.ts
 var import_howler = __toESM(require_howler(), 1);
 var SustainHowl = class extends import_howler.Howl {
@@ -18712,6 +18679,38 @@ var LottieController = class {
     __publicField(this, "debug", false);
     __publicField(this, "volumeVariation");
     __publicField(this, "rateVariation");
+    __publicField(this, "onComplete", (callback) => {
+      return this.player.addEventListener("complete", callback);
+    });
+    __publicField(this, "onLoad", (callback) => {
+      return this.player.addEventListener("DOMLoaded", callback);
+    });
+    __publicField(this, "onAudio", (callback) => {
+      return this.player.addEventListener("audio", callback);
+    });
+    __publicField(this, "getElem", (selector, parent2) => {
+      parent2 || (parent2 = this.player.renderer.svgElement);
+      if (!selector) return parent2;
+      return getElem(selector, parent2);
+    });
+    __publicField(this, "isPlaying", (...acts) => {
+      return this.animation !== null && acts.includes(this.animation);
+    });
+    __publicField(this, "currentAnimation", () => {
+      return this.animation;
+    });
+    __publicField(this, "play", (anim, { loop = false, force = true } = {}) => {
+      this.animation = anim;
+      const container = this.getElem();
+      if (container && container instanceof HTMLElement)
+        container.dataset.animation = anim;
+      this.player.loop = loop;
+      if (this.debug) console.log("playing:", anim);
+      playAnimation(this.player, anim, force);
+    });
+    __publicField(this, "destroy", () => {
+      this.player.destroy();
+    });
     const {
       debug = false,
       injectCSS = true,
@@ -18723,7 +18722,6 @@ var LottieController = class {
     this.debug = debug;
     this.volumeVariation = volumeVariation;
     this.rateVariation = rateVariation;
-    console.log(injectCSS);
     if (injectCSS) {
       let style = document.querySelector("style[data-type=lottie-controller]");
       if (!style) {
@@ -18792,45 +18790,13 @@ var LottieController = class {
       });
       oldFrame = frame;
     });
-    autoBind(this);
-  }
-  onComplete(callback) {
-    return this.player.addEventListener("complete", callback);
-  }
-  onLoad(callback) {
-    return this.player.addEventListener("DOMLoaded", callback);
-  }
-  onAudio(callback) {
-    return this.player.addEventListener("audio", callback);
-  }
-  getElem(selector, parent2) {
-    parent2 || (parent2 = this.player.renderer.svgElement);
-    if (!selector) return parent2;
-    return getElem(selector, parent2);
-  }
-  isPlaying(...acts) {
-    return this.animation !== null && acts.includes(this.animation);
-  }
-  currentAnimation() {
-    return this.animation;
-  }
-  play(anim, { loop = false, force = true } = {}) {
-    this.animation = anim;
-    const container = this.getElem();
-    if (container && container instanceof HTMLElement)
-      container.dataset.animation = anim;
-    this.player.loop = loop;
-    if (this.debug) console.log("playing:", anim);
-    playAnimation(this.player, anim, force);
-  }
-  destroy() {
-    this.player.destroy();
   }
 };
 
 // src/uselottie/index.ts
 function useLottie(options) {
-  return new LottieController(options);
+  const controller = new LottieController(options);
+  return controller;
 }
 globalThis.useLottie = useLottie;
 export {

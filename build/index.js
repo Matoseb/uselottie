@@ -36,7 +36,6 @@ module.exports = __toCommonJS(uselottie_exports);
 
 // src/uselottie/LottieController.ts
 var import_lottie_web = __toESM(require("lottie-web"), 1);
-var import_auto_bind = __toESM(require("auto-bind"), 1);
 
 // src/uselottie/SustainHowl.ts
 var import_howler = require("howler");
@@ -146,7 +145,6 @@ var LottieController = class {
     this.debug = debug;
     this.volumeVariation = volumeVariation;
     this.rateVariation = rateVariation;
-    console.log(injectCSS);
     if (injectCSS) {
       let style = document.querySelector("style[data-type=lottie-controller]");
       if (!style) {
@@ -215,29 +213,28 @@ var LottieController = class {
       });
       oldFrame = frame;
     });
-    (0, import_auto_bind.default)(this);
   }
-  onComplete(callback) {
+  onComplete = (callback) => {
     return this.player.addEventListener("complete", callback);
-  }
-  onLoad(callback) {
+  };
+  onLoad = (callback) => {
     return this.player.addEventListener("DOMLoaded", callback);
-  }
-  onAudio(callback) {
+  };
+  onAudio = (callback) => {
     return this.player.addEventListener("audio", callback);
-  }
-  getElem(selector, parent) {
+  };
+  getElem = (selector, parent) => {
     parent || (parent = this.player.renderer.svgElement);
     if (!selector) return parent;
     return getElem(selector, parent);
-  }
-  isPlaying(...acts) {
+  };
+  isPlaying = (...acts) => {
     return this.animation !== null && acts.includes(this.animation);
-  }
-  currentAnimation() {
+  };
+  currentAnimation = () => {
     return this.animation;
-  }
-  play(anim, { loop = false, force = true } = {}) {
+  };
+  play = (anim, { loop = false, force = true } = {}) => {
     this.animation = anim;
     const container = this.getElem();
     if (container && container instanceof HTMLElement)
@@ -245,14 +242,15 @@ var LottieController = class {
     this.player.loop = loop;
     if (this.debug) console.log("playing:", anim);
     playAnimation(this.player, anim, force);
-  }
-  destroy() {
+  };
+  destroy = () => {
     this.player.destroy();
-  }
+  };
 };
 
 // src/uselottie/index.ts
 function useLottie(options) {
-  return new LottieController(options);
+  const controller = new LottieController(options);
+  return controller;
 }
 globalThis.useLottie = useLottie;
