@@ -5,7 +5,7 @@
     "email": "contact@matoseb.com",
     "url": "https://matoseb.com"
   },
-  "version": "0.0.2",
+  "version": "0.0.3",
   "description": "Wrapper for lottie web",
   "main": "build/index.js",
   "files": [
