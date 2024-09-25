@@ -6,7 +6,7 @@ import path from "path";
 const sharedConfig = {
   entryPoints: ["./src/uselottie/index.ts"],
   bundle: true,
-  // minify: true,
+  minify: true,
   treeShaking: true,
   outdir: "./build",
   plugins: [
