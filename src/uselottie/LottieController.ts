@@ -1,5 +1,4 @@
 import lottie, { AnimationConfigWithPath } from "lottie-web";
-import autoBind from "auto-bind";
 import SustainHowl, { SustainHowlOptions } from "./SustainHowl";
 import styleContent from "./index.scss?inline";
 
@@ -47,7 +46,6 @@ export default class LottieController {
     this.volumeVariation = volumeVariation;
     this.rateVariation = rateVariation;
 
-    console.log(injectCSS);
 
     if (injectCSS) {
       let style = document.querySelector("style[data-type=lottie-controller]");
@@ -134,31 +132,29 @@ export default class LottieController {
 
       oldFrame = frame;
     });
-
-    autoBind(this);
   }
 
-  onComplete(callback: Callback) {
+  onComplete = (callback: Callback) => {
     return this.player.addEventListener("complete", callback);
   }
-  onLoad(callback: Callback) {
+  onLoad = (callback: Callback) => {
     return this.player.addEventListener("DOMLoaded", callback);
   }
-  onAudio(callback: Callback) {
+  onAudio = (callback: Callback) => {
     return this.player.addEventListener("audio", callback);
   }
-  getElem(selector?: string | null, parent?: Element) {
+  getElem = (selector?: string | null, parent?: Element) => {
     parent ||= this.player.renderer.svgElement;
     if (!selector) return parent;
     return getElem(selector, parent);
   }
-  isPlaying(...acts: string[]) {
+  isPlaying = (...acts: string[]) => {
     return this.animation !== null && acts.includes(this.animation);
   }
-  currentAnimation() {
+  currentAnimation = () => {
     return this.animation;
   }
-  play(anim: string, { loop = false, force = true } = {}) {
+  play = (anim: string, { loop = false, force = true } = {}) => {
     this.animation = anim;
     const container = this.getElem();
 
@@ -171,7 +167,7 @@ export default class LottieController {
     playAnimation(this.player, anim, force);
   }
 
-  destroy() {
+  destroy = () => {
     this.player.destroy();
   }
 }

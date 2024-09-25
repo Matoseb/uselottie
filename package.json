@@ -30,7 +30,6 @@
   },
   "dependencies": {
     "@types/howler": "^2.2.12",
-    "auto-bind": "^5.0.1",
     "esbuild-sass-plugin": "^3.3.1",
     "howler": "^2.2.4",
     "lottie-web": "^5.12.2"

@@ -10,7 +10,7 @@ const ACTION = {
 };
 
 const { onLoad, onComplete, play, getElem, isPlaying } = useLottie({
-  container: ".lottie",
+  container: '.lottie',
   path: "/animations/heart/data.json",
   debug: true,
 });
