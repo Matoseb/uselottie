@@ -6,7 +6,7 @@ await esbuild.build({
   bundle: true,
   minify: true,
 //   outfile: "uselottie.js",
-  outdir: "./dist/",
+  outdir: "./build/",
   plugins: [sassPlugin({
     type: "css-text",
   })],
