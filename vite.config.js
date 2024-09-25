@@ -3,7 +3,7 @@ import cleanup from "rollup-plugin-cleanup";
 import path from "path";
 import fs from "fs";
 
-const OUT_DIR = "docs";
+const OUT_DIR = "dist";
 const IN_DIR = "examples";
 const USELOTTIE_URL = "https://toggle.matoseb.com/dist/index.js";
 
