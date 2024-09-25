@@ -26,5 +26,8 @@ await esbuild.build({
 
 await esbuild.build({
   ...sharedConfig,
+  platform: "browser",
+  format: "esm",
+  target: "es2020",
   outdir: path.join(sharedConfig.outdir, "bundle"),
 });
