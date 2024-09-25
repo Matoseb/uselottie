@@ -11,12 +11,13 @@
   "type": "module",
   "scripts": {
     "dev": "vite",
-    "build": "node build.js",
+    "build": "rm -rf dist && node build.js && tsc",
     "build:pages": "tsc && vite build",
     "preview": "vite preview"
   },
   "devDependencies": {
     "esbuild": "0.24.0",
+    "esbuild-node-externals": "^1.14.0",
     "prettier": "3.3.3",
     "rollup-plugin-cleanup": "^3.2.1",
     "sass": "^1.79.3",
