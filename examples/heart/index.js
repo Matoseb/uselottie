@@ -9,11 +9,13 @@ const ACTION = {
   activeReleased: "active-release, active-release-end",
 };
 
+
 const { onLoad, onComplete, play, getElem, isPlaying } = useLottie({
-  container: '.lottie',
+  container: ".lottie",
   path: "/animations/heart/data.json",
   debug: true,
 });
+
 
 onLoad(() => {
   play(ACTION.idle);

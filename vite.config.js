@@ -58,7 +58,7 @@ export default defineConfig({
       ],
     },
   },
-  esbuild: isDev ? true : false,
+  esbuild: isDev ? true : false, // disable to prevent esbuild full minification
   experimental: {
     renderBuiltUrl(filename, { hostId, hostType, type }) {
       const folder = path.dirname(hostId);
