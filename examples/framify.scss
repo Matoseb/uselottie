@@ -1,0 +1,73 @@
+@mixin mobile {
+  @media (max-width: 768px) {
+    @content;
+  }
+}
+
+@mixin ismouse {
+  @media (pointer: fine) {
+    @content;
+  }
+}
+
+.framify {
+  $gap: 1rem;
+
+  position: relative;
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(20vmax, 1fr));
+  padding: $gap;
+  box-sizing: border-box;
+
+  @include mobile {
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+  }
+
+
+  &__cell {
+    position: relative;
+    width: 100%;
+    aspect-ratio: 1 / 1;
+    border-radius: $gap;
+    overflow: hidden;
+
+    @mixin shadow {
+      box-shadow: 0 0 10px rgba(158, 160, 162, 0.439);
+      z-index: 1;
+    }
+
+    @include ismouse {
+      &:hover {
+        @include shadow;
+      }
+    }
+
+    &.fullscreen {
+      @include shadow;
+    }
+
+    .fullscreen ~ & {
+      display: none;
+    }
+
+    &.fullscreen {
+      position: fixed;
+      top: $gap;
+      left: $gap;
+      width: calc(100% - 2 * #{$gap});
+      height: calc(100dvh - 2 * #{$gap});
+      z-index: 1000;
+    }
+
+    > iframe {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      border: none;
+    }
+  }
+}

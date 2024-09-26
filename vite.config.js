@@ -20,14 +20,22 @@ function getHtmlEntries(root = IN_DIR) {
   const htmlFiles = files.filter((file) => file.endsWith(".html"));
 
   htmlFiles.forEach((file) => {
-    let name = file.replaceAll("/", "-");
-    name = name.replace("-index.html", ".html");
-    name = path.basename(name, ".html");
+    // let name = file.replaceAll("/", "-");
+    let name = file;
+    name = name.replace("/index.html", ".html");
+    // remove the extension last regex
+    name = name.replace(/\.html$/, "");
 
     entries[name] = path.resolve(pagesDir, file);
   });
 
   return entries;
+}
+
+function isRoot(infos) {
+  return (
+    path.parse(infos.name).name === "index" && path.dirname(infos.name) === "."
+  );
 }
 
 /** @type {import('vite').UserConfig} */
@@ -48,8 +56,10 @@ export default defineConfig({
           "@matoseb/uselottie": USELOTTIE_URL,
         },
         manualChunks: {},
-        entryFileNames: "[name]/[name].js",
-        assetFileNames: "[name]/[name][extname]",
+        entryFileNames: (infos) =>
+          `${isRoot(infos) ? "" : `[name]/`}index.js`,
+        assetFileNames: (infos) =>
+          `${isRoot(infos) ? "" : "[name]/"}style[extname]`,
       },
       plugins: [
         cleanup({

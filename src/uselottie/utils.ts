@@ -1,8 +1,12 @@
 import tinycolor from "tinycolor2";
 
+// System
 export function isIOS() {
   return /iPad|iPhone|iPod/.test(navigator.userAgent);
 }
+
+// fallbacks
+export const noFunc = () => {}
 
 // DOM
 export function getElem(
@@ -46,17 +50,25 @@ export function convertShortHand(value: number | number[]) {
   return value.slice(0, 4);
 }
 
-// debugging
-export function fancyLog(this: any, ...value: any[]) {
-  const { name, color = "lightgray" } = this;
+export type ConsoleType = "log" | "warn" | "error" | "info" | "debug";
 
-  if (!name) return console.log(...value);
+type FancyLog = {
+  name?: string;
+  color?: string;
+  as?: ConsoleType;
+};
+
+// debugging
+export function fancyLog(this: FancyLog, ...value: any[]) {
+  const { name, color = "lightgray", as = "log" } = this;
+
+  if (!name) return console[as](...value);
 
   const textColor = tinycolor(color).getLuminance() >= 0.5 ? "black" : "white";
 
-  console.log(
+  console[as](
     `%c${name}`,
-    `color: ${textColor}; padding: 3px; border-radius: 3px; background-color: ${color};`,
+    `color: ${textColor}; padding: 3px 5px; border-radius: 3px; background-color: ${color};`,
     ...value
   );
 }

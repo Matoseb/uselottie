@@ -9,9 +9,9 @@ import {
   BMDestroyEvent,
 } from "lottie-web";
 
-import SustainHowl from "./SustainHowl";
+import LottieAudio from "./LottieAudio";
 
-interface Marker {
+type Marker = {
   payload: {
     name: string;
   };
@@ -25,21 +25,21 @@ export type AnimationValue =
   | AnimationSegment[]
   | null;
 
-interface AudioControl {
-  audio: SustainHowl;
+type AudioControl = {
+  audio: LottieAudio;
   data: any;
 }
 
-export interface BMAudioEvent {
+export type BMAudioEvent = {
   audios: AudioControl[];
-  audio: SustainHowl;
+  audio: LottieAudio;
   data: any;
   willPlay: boolean;
 }
 
 type CompleteAnimationEventName = "audio" | AnimationEventName;
 
-export interface CompleteAnimationItem extends AnimationItem {
+export type CompleteAnimationItem = AnimationItem & {
   markers: Marker[];
   fileName: string;
   path: string;

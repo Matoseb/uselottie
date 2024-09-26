@@ -1,11 +1,10 @@
 import { Howl, HowlOptions } from "howler";
 
-export interface SustainHowlOptions extends HowlOptions {
- 
+export interface LottieAudioOptions extends HowlOptions {
 }
 
-export default class SustainHowl extends Howl {
-  constructor(options: SustainHowlOptions) {
+export default class LottieAudio extends Howl {
+  constructor(options: LottieAudioOptions) {
     super(options);
     // super.on("end", () => {
     //   // this.isPlaying = false;

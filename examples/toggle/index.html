@@ -19,7 +19,7 @@
 
       .lottie {
         width: 100%;
-        height: 100%;
+        /* height: 100%; */
         max-width: 40vmin;
       }
 
@@ -27,12 +27,16 @@
         cursor: pointer;
       }
 
-      .toggle g {
+      .toggle > g {
         transition: filter 0.2s;
       }
 
-      .toggle:hover g {
+      .toggle:hover > g {
         filter: brightness(0.9);
+      }
+
+      .toggle:active > g {
+        filter: brightness(0.8);
       }
     </style>
   </head>

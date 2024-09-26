@@ -1,0 +1,14 @@
+body {
+  min-height: 100dvh;
+  overflow: hidden auto;
+  margin: 0;
+  background-color: white;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.framify {
+  flex: 0 1 auto;
+  max-width: 100%;
+}

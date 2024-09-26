@@ -1,5 +1,5 @@
 import lottie, { AnimationConfigWithPath, SVGRendererConfig } from "lottie-web";
-import SustainHowl, { SustainHowlOptions } from "./SustainHowl";
+import LottieAudio, { LottieAudioOptions } from "./LottieAudio";
 import styleContent from "./index.scss?inline";
 
 import {
@@ -11,6 +11,8 @@ import {
   toPercent,
   fancyLog,
   convertShortHand,
+  noFunc,
+  ConsoleType,
 } from "./utils";
 
 import {
@@ -21,26 +23,44 @@ import {
   CompleteAnimationItem,
 } from "./lottie-utils";
 
-export interface LottieControllerConfig
-  extends Omit<AnimationConfigWithPath, "container"> {
+export type LottieControllerConfig = Omit<
+  AnimationConfigWithPath,
+  "container"
+> & {
   debug?: boolean;
   injectCSS?: boolean;
   volumeVariation?: number;
   rateVariation?: number;
-  howlerOptions?: SustainHowlOptions;
+  howlerOptions?: LottieAudioOptions;
   container?: string | Element;
   filterSpread?: number | number[];
-}
+};
 
 type Callback = (event: any) => void;
+type AnimationKey = string | null;
 
-enum COLORS {
-  event = "lightblue",
-  action = "orange",
+enum MESSAGE {
+  event, // log
+  action, // log
+  default, // log
+  error, // error
 }
 
+const COLORS: Record<MESSAGE, string> = {
+  [MESSAGE.event]: "lightblue",
+  [MESSAGE.action]: "orange",
+  [MESSAGE.default]: "lightgray",
+  [MESSAGE.error]: "red",
+};
+
+const LOGTYPES: PartialRecord<MESSAGE, ConsoleType> = {
+  [MESSAGE.error]: "error",
+  [MESSAGE.default]: "log",
+};
+// logtype based on COLORS:
+
 export default class LottieController {
-  animation: AnimationValue = null;
+  animation: AnimationKey = null;
   container: Element | null = null;
   player: CompleteAnimationItem;
   debug: boolean = false;
@@ -71,14 +91,17 @@ export default class LottieController {
         document.body.appendChild(style);
       }
     }
-    // let animation;
 
     this.container =
       typeof options.container === "string"
         ? (() => {
             const elem = getElem(options.container);
             if (!elem) {
-              throw new Error(`Element not found: ${options.container}`);
+              this.log(
+                `Element not found`,
+                MESSAGE.error
+              )(options.container);
+              throw new Error('Element not found:' + options.container);
             }
             return elem;
           })()
@@ -93,7 +116,7 @@ export default class LottieController {
         filterSize: LottieController.buildFilterSize(filterSpread),
       },
       audioFactory(assetPath) {
-        const audio = new SustainHowl({
+        const audio = new LottieAudio({
           src: assetPath,
           html5: isIOS() ? true : false,
           // preload: true,
@@ -112,7 +135,7 @@ export default class LottieController {
 
       this.log(
         "DOMLoaded",
-        COLORS.event
+        MESSAGE.event
       )(this.player.path + this.player.fileName + ".json");
 
       const container = this.getElem() as HTMLElement;
@@ -133,11 +156,11 @@ export default class LottieController {
     });
 
     this.player.addEventListener("complete", () => {
-      this.log("complete", COLORS.event)(this.animation);
+      this.log("complete", MESSAGE.event)(this.animation);
     });
 
     this.player.addEventListener("loopComplete", () => {
-      this.log("loopComplete", COLORS.event)(this.animation);
+      this.log("loopComplete", MESSAGE.event)(this.animation);
     });
 
     let oldFrame = Infinity;
@@ -185,9 +208,9 @@ export default class LottieController {
     parent ||= this.player.renderer.svgElement;
     return getElems(selector, parent || undefined);
   };
-  isPlaying = (...acts: any[]) => {
-    acts = acts.map(LottieController.getAnimationKey);
-    return this.animation !== null && acts.includes(this.animation);
+  isPlaying = (...possibleAnimations: AnimationValue[]) => {
+    const keys = possibleAnimations.map(LottieController.getAnimationKey);
+    return this.animation !== null && keys.includes(this.animation);
   };
   currentAnimation = () => {
     return this.animation;
@@ -196,7 +219,7 @@ export default class LottieController {
     this.player.loop = false;
 
     this.setAnimation(animation);
-    this.log("seek", COLORS.action)(this.animation, position);
+    this.log("seek", MESSAGE.action)(this.animation, position);
 
     return seekAnimation(this.player, animation, position, isFrame);
   };
@@ -205,24 +228,24 @@ export default class LottieController {
   };
 
   setAnimation = (anim: AnimationValue = null) => {
-    // if (container) container.dataset.animation = anim;
-    anim = LottieController.getAnimationKey(anim);
-
-    this.animation = anim;
+    this.animation = LottieController.getAnimationKey(anim);
 
     const container = this.getElem() as HTMLElement;
     if (!container) return;
 
-    if (anim === null) {
+    if (this.animation === null) {
       container.removeAttribute("data-animation");
       return;
     }
-    container.setAttribute("data-animation", anim);
+    container.setAttribute("data-animation", this.animation);
   };
 
-  log = (name?: string, color?: string) => {
-    if (!this.debug) return () => {};
-    return (...value: any[]) => fancyLog.call({ name, color }, ...value);
+  log = (name?: string, messageType?: MESSAGE) => {
+    if (!this.debug) return noFunc;
+
+    const as = LOGTYPES[messageType || MESSAGE.default];
+    const color = COLORS[messageType || MESSAGE.default];
+    return (...value: any[]) => fancyLog.call({ name, color, as }, ...value);
   };
 
   play = (
@@ -241,7 +264,7 @@ export default class LottieController {
 
     this.setAnimation(anim);
 
-    this.log("play", COLORS.action)(this.animation);
+    this.log("play", MESSAGE.action)(this.animation);
 
     return playAnimation(this.player, anim, force);
   };
@@ -260,10 +283,9 @@ export default class LottieController {
     return fileName;
   }
 
-  static getAnimationKey(anim: AnimationValue = null) {
-    if (anim !== null)
-      anim = typeof anim === "string" ? anim : JSON.stringify(anim);
-    return anim;
+  static getAnimationKey(anim: AnimationValue = null): AnimationKey {
+    if (anim === null || anim === undefined) return null;
+    return typeof anim === "string" ? anim : JSON.stringify(anim);
   }
 
   static buildFilterSize(spread: number | number[]) {
