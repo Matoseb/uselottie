@@ -38,6 +38,10 @@ function isRoot(infos) {
   );
 }
 
+function fileName(infos) {
+  return path.basename(infos.name);
+}
+
 /** @type {import('vite').UserConfig} */
 export default defineConfig({
   root: IN_DIR,
@@ -57,9 +61,15 @@ export default defineConfig({
         },
         manualChunks: {},
         entryFileNames: (infos) =>
-          `${isRoot(infos) ? "" : `[name]/`}index.js`,
-        assetFileNames: (infos) =>
-          `${isRoot(infos) ? "" : "[name]/"}style[extname]`,
+          `${isRoot(infos) ? "index" : `[name]/${fileName(infos)}`}.js`,
+        assetFileNames: (infos) => {
+          if (isRoot(infos)) return "index[extname]";
+
+          const { dir } = path.parse(infos.originalFileName || "");
+          const name = path.basename(dir);
+          return `${dir}/${name}[extname]`; //! can de-duplicate if same content
+          // assetFileNames: `style/[name][extname]`,
+        },
       },
       plugins: [
         cleanup({
