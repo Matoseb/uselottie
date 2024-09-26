@@ -2,7 +2,16 @@ import lottie, { AnimationConfigWithPath, SVGRendererConfig } from "lottie-web";
 import SustainHowl, { SustainHowlOptions } from "./SustainHowl";
 import styleContent from "./index.scss?inline";
 
-import { getElem, getElems, firstCap, random, isIOS, toPercent } from "./utils";
+import {
+  getElem,
+  getElems,
+  firstCap,
+  random,
+  isIOS,
+  toPercent,
+  fancyLog,
+  convertShortHand,
+} from "./utils";
 
 import {
   playAnimation,
@@ -24,6 +33,11 @@ export interface LottieControllerConfig
 }
 
 type Callback = (event: any) => void;
+
+enum COLORS {
+  event = "lightblue",
+  action = "orange",
+}
 
 export default class LottieController {
   animation: AnimationValue = null;
@@ -96,6 +110,11 @@ export default class LottieController {
       const fileName = LottieController.getName(this.player);
       document.title = firstCap(fileName);
 
+      this.log(
+        "DOMLoaded",
+        COLORS.event
+      )(this.player.path + this.player.fileName + ".json");
+
       const container = this.getElem() as HTMLElement;
       if (!container) return;
 
@@ -111,6 +130,14 @@ export default class LottieController {
         },
         true
       );
+    });
+
+    this.player.addEventListener("complete", () => {
+      this.log("complete", COLORS.event)(this.animation);
+    });
+
+    this.player.addEventListener("loopComplete", () => {
+      this.log("loopComplete", COLORS.event)(this.animation);
     });
 
     let oldFrame = Infinity;
@@ -166,9 +193,11 @@ export default class LottieController {
     return this.animation;
   };
   seek = (animation: AnimationValue, { position = 0, isFrame = true } = {}) => {
-    this.log("seeking", animation);
-    this.setAnimation(animation);
     this.player.loop = false;
+
+    this.setAnimation(animation);
+    this.log("seek", COLORS.action)(this.animation, position);
+
     return seekAnimation(this.player, animation, position, isFrame);
   };
   getAnimation = () => {
@@ -191,9 +220,9 @@ export default class LottieController {
     container.setAttribute("data-animation", anim);
   };
 
-  log = (name: string, value: any) => {
-    if (!this.debug) return;
-    console.log(`${name}:`, value);
+  log = (name?: string, color?: string) => {
+    if (!this.debug) return () => {};
+    return (...value: any[]) => fancyLog.call({ name, color }, ...value);
   };
 
   play = (
@@ -204,8 +233,6 @@ export default class LottieController {
 
     this.player.loop = loop;
 
-    this.log("playing", anim);
-
     if (typeof anim === "number") {
       this.setAnimation();
       this.player.goToAndPlay(anim, isFrame);
@@ -213,6 +240,9 @@ export default class LottieController {
     }
 
     this.setAnimation(anim);
+
+    this.log("play", COLORS.action)(this.animation);
+
     return playAnimation(this.player, anim, force);
   };
 
@@ -237,7 +267,6 @@ export default class LottieController {
   }
 
   static buildFilterSize(spread: number | number[]) {
-    
     const [top, right, bottom, left] = convertShortHand(spread);
 
     return {
@@ -247,17 +276,4 @@ export default class LottieController {
       height: toPercent(1 + bottom + top),
     } as SVGRendererConfig["filterSize"];
   }
-}
-
-function convertShortHand(value: number | number[]) {
-  if (typeof value === "number") {
-    return [value, value, value, value];
-  }
-  if (value.length === 2) {
-    return [value[0], value[1], value[0], value[1]];
-  }
-  if (value.length === 3) {
-    return [value[0], value[1], value[2], value[1]];
-  }
-  return value.slice(0, 4);
 }
