@@ -23,6 +23,7 @@
     "preview": "vite preview"
   },
   "devDependencies": {
+    "@types/tinycolor2": "^1.4.6",
     "esbuild": "0.24.0",
     "esbuild-node-externals": "^1.14.0",
     "esbuild-sass-plugin": "^3.3.1",
