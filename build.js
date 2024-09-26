@@ -12,6 +12,9 @@ new pkg.Generator({
   output: path.join(OUT_DIR, "index.d.ts"),
 }).generate();
 
+/**
+ * @type {esbuild.BuildOptions} - Shared configuration for esbuild.
+ */
 const sharedConfig = {
   entryPoints: [ENTRY],
   bundle: true,
