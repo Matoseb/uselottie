@@ -1,33 +1,32 @@
-import lottie, { AnimationConfigWithPath } from "lottie-web";
+import lottie, { AnimationConfigWithPath, SVGRendererConfig } from "lottie-web";
 import SustainHowl, { SustainHowlOptions } from "./SustainHowl";
 import styleContent from "./index.scss?inline";
 
+import { getElem, getElems, firstCap, random, isIOS, toPercent } from "./utils";
+
 import {
-  getElem,
-  getElems,
-  firstCap,
   playAnimation,
-  random,
-  CompleteAnimationItem,
+  seekAnimation,
   BMAudioEvent,
-  isIOS,
-} from "./utils";
+  AnimationValue,
+  CompleteAnimationItem,
+} from "./lottie-utils";
 
 export interface LottieControllerConfig
   extends Omit<AnimationConfigWithPath, "container"> {
   debug?: boolean;
   injectCSS?: boolean;
-  variations?: { rate: number; volume: number };
   volumeVariation?: number;
   rateVariation?: number;
   howlerOptions?: SustainHowlOptions;
   container?: string | Element;
+  filterSpread?: number | number[];
 }
 
 type Callback = (event: any) => void;
 
 export default class LottieController {
-  animation: string | null = null;
+  animation: AnimationValue = null;
   container: Element | null = null;
   player: CompleteAnimationItem;
   debug: boolean = false;
@@ -40,6 +39,7 @@ export default class LottieController {
       injectCSS = true,
       volumeVariation = 0,
       rateVariation = 0,
+      filterSpread = 0.5,
       howlerOptions = {},
       ...lottieOptions
     } = options;
@@ -74,6 +74,10 @@ export default class LottieController {
       renderer: "svg", // Render method ('svg', 'canvas', or 'html')
       loop: false, // Set looping to true
       autoplay: false, // Set to true for autoplaying the animation
+      rendererSettings: {
+        // viewBoxSize: 1,
+        filterSize: LottieController.buildFilterSize(filterSpread),
+      },
       audioFactory(assetPath) {
         const audio = new SustainHowl({
           src: assetPath,
@@ -89,14 +93,14 @@ export default class LottieController {
     }) as unknown as CompleteAnimationItem;
 
     this.player.addEventListener("DOMLoaded", () => {
-      const { fileName } = this.player;
+      const fileName = LottieController.getName(this.player);
       document.title = firstCap(fileName);
 
       const container = this.getElem() as HTMLElement;
       if (!container) return;
-      // Disable right click
 
-      container.dataset.filename = this.player.fileName;
+      // Disable right click
+      container.dataset.filename = fileName;
       container.classList.add("lottie-controller");
       container.addEventListener(
         "contextmenu",
@@ -107,10 +111,6 @@ export default class LottieController {
         },
         true
       );
-
-      // this.getElem().onclick = () => {
-      //   Howler._unlockAudio();
-      // };
     });
 
     let oldFrame = Infinity;
@@ -158,25 +158,106 @@ export default class LottieController {
     parent ||= this.player.renderer.svgElement;
     return getElems(selector, parent || undefined);
   };
-  isPlaying = (...acts: string[]) => {
+  isPlaying = (...acts: any[]) => {
+    acts = acts.map(LottieController.getAnimationKey);
     return this.animation !== null && acts.includes(this.animation);
   };
   currentAnimation = () => {
     return this.animation;
   };
-  play = (anim: string, { loop = false, force = true } = {}) => {
+  seek = (animation: AnimationValue, { position = 0, isFrame = true } = {}) => {
+    this.log("seeking", animation);
+    this.setAnimation(animation);
+    this.player.loop = false;
+    return seekAnimation(this.player, animation, position, isFrame);
+  };
+  getAnimation = () => {
+    return this.animation;
+  };
+
+  setAnimation = (anim: AnimationValue = null) => {
+    // if (container) container.dataset.animation = anim;
+    anim = LottieController.getAnimationKey(anim);
+
     this.animation = anim;
 
     const container = this.getElem() as HTMLElement;
-    if (container) container.dataset.animation = anim;
+    if (!container) return;
+
+    if (anim === null) {
+      container.removeAttribute("data-animation");
+      return;
+    }
+    container.setAttribute("data-animation", anim);
+  };
+
+  log = (name: string, value: any) => {
+    if (!this.debug) return;
+    console.log(`${name}:`, value);
+  };
+
+  play = (
+    anim?: AnimationValue,
+    { isFrame = true, loop = false, smooth = false } = {}
+  ) => {
+    const force = !smooth;
 
     this.player.loop = loop;
-    if (this.debug) console.log("playing:", anim);
 
-    playAnimation(this.player, anim, force);
+    this.log("playing", anim);
+
+    if (typeof anim === "number") {
+      this.setAnimation();
+      this.player.goToAndPlay(anim, isFrame);
+      return;
+    }
+
+    this.setAnimation(anim);
+    return playAnimation(this.player, anim, force);
   };
 
   destroy = () => {
     this.player.destroy();
   };
+
+  static getName(player: CompleteAnimationItem) {
+    let { fileName, path = "" } = player;
+    // console.log(path, fileName);
+    if (!fileName || fileName === "data") {
+      return path.split("/").filter(Boolean).pop() || "untitled";
+    }
+
+    return fileName;
+  }
+
+  static getAnimationKey(anim: AnimationValue = null) {
+    if (anim !== null)
+      anim = typeof anim === "string" ? anim : JSON.stringify(anim);
+    return anim;
+  }
+
+  static buildFilterSize(spread: number | number[]) {
+    
+    const [top, right, bottom, left] = convertShortHand(spread);
+
+    return {
+      x: toPercent(-left),
+      y: toPercent(-top),
+      width: toPercent(1 + right + left),
+      height: toPercent(1 + bottom + top),
+    } as SVGRendererConfig["filterSize"];
+  }
+}
+
+function convertShortHand(value: number | number[]) {
+  if (typeof value === "number") {
+    return [value, value, value, value];
+  }
+  if (value.length === 2) {
+    return [value[0], value[1], value[0], value[1]];
+  }
+  if (value.length === 3) {
+    return [value[0], value[1], value[2], value[1]];
+  }
+  return value.slice(0, 4);
 }
