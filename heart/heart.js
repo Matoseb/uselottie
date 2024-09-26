@@ -9,14 +9,16 @@ const ACTION = {
   activeReleased: "active-release, active-release-end",
 };
 
-const { onLoad, onComplete, play, getElem, isPlaying } = useLottie({
+const controller = useLottie({
   container: ".lottie",
   path: "/animations/heart/data.json",
   debug: true,
 });
 
+const { onLoad, onComplete, seek, play, isPlaying, getElem } = controller;
+
 onLoad(() => {
-  play(ACTION.idle);
+  seek(ACTION.idle);
 
   getElem(".heart").onpointerdown = () => {
     if (isPlaying(ACTION.release)) {
