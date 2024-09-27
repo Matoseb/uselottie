@@ -13,6 +13,7 @@ import {
   convertShortHand,
   noFunc,
   ConsoleType,
+  injectCSS,
 } from "./utils";
 
 import {
@@ -70,7 +71,7 @@ export default class LottieController {
   constructor(options: LottieControllerConfig = {}) {
     const {
       debug = false,
-      injectCSS = true,
+      injectCSS: addCSS = true,
       volumeVariation = 0,
       rateVariation = 0,
       filterSpread = 0.5,
@@ -82,15 +83,8 @@ export default class LottieController {
     this.volumeVariation = volumeVariation;
     this.rateVariation = rateVariation;
 
-    if (injectCSS) {
-      let style = document.querySelector("style[data-type=lottie-controller]");
-      if (!style) {
-        style = document.createElement("style");
-        style.setAttribute("data-type", "lottie-controller");
-        style.innerHTML = styleContent;
-        document.body.appendChild(style);
-      }
-    }
+    if(addCSS)
+      injectCSS("lottie-controller", styleContent);
 
     this.container =
       typeof options.container === "string"

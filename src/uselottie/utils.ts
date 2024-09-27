@@ -6,7 +6,7 @@ export function isIOS() {
 }
 
 // fallbacks
-export const noFunc = () => {}
+export const noFunc = () => {};
 
 // DOM
 export function getElem(
@@ -32,7 +32,7 @@ export function toPercent(value: number, total = 1) {
 }
 
 // text
-export function firstCap(text: string) {
+export function firstCap(text: string = "") {
   return text.charAt(0).toUpperCase() + text.slice(1);
 }
 
@@ -71,4 +71,17 @@ export function fancyLog(this: FancyLog, ...value: any[]) {
     `color: ${textColor}; padding: 3px 5px; border-radius: 3px; background-color: ${color};`,
     ...value
   );
+}
+
+export function injectCSS(name: string, styleContent = "") {
+  const attr = "data-type";
+  let style = document.querySelector(`style[${attr}="${name}]`);
+
+  if (!style) {
+    style = document.createElement("style");
+    style.setAttribute(attr, name);
+    document.head.appendChild(style);
+  }
+
+  style.innerHTML = styleContent;
 }
