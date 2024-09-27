@@ -17,6 +17,7 @@
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(20vmax, 1fr));
   padding: $gap;
+  gap: $gap;
   box-sizing: border-box;
 
   @include mobile {
@@ -34,7 +35,7 @@
     overflow: hidden;
 
     @mixin shadow {
-      box-shadow: 0 0 10px rgba(158, 160, 162, 0.439);
+      box-shadow: 0 0 10px rgba(158, 160, 162, 0.25);
       z-index: 1;
     }
 

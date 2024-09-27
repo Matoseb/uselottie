@@ -32,7 +32,7 @@
     "rollup-plugin-cleanup": "^3.2.1",
     "sass": "^1.79.3",
     "typescript": "^5.5.3",
-    "vite": "^5.4.1",
+    "vite": "^5.4.8",
     "vite-tsconfig-paths": "^5.0.1"
   },
   "dependencies": {
