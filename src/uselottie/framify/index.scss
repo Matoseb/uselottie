@@ -10,6 +10,18 @@
   }
 }
 
+@mixin hover {
+  @include ismouse {
+    &:hover {
+      @content;
+    }
+  }
+
+  &:active {
+    @content;
+  }
+}
+
 .framify {
   $gap: 1rem;
   $color-shadow: rgba(158, 160, 162, 0.25);
@@ -54,7 +66,9 @@
       text-decoration: none;
       padding: $gap;
       visibility: hidden;
-      display: block;
+      aspect-ratio: 1 / 1;
+      width: unset;
+      display: flex;
       color: transparent;
 
       background-clip: text;
@@ -71,20 +85,21 @@
         opacity: 1;
       }
 
-      @include ismouse {
+      @include hover {
+        background-color: $color-link;
+      }
 
-        &:hover {
-          background-color: $color-link;
-        }
-
-        :hover > & {
-          @include link-visible;
-        }
+      :hover > & {
+        @include link-visible;
       }
 
       @include mobile {
         @include link-visible;
       }
+    }
+
+    @include mobile {
+      @include shadow;
     }
 
     &.fullscreen {
