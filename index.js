@@ -7,6 +7,7 @@ function framify(folders = window.links, { parent = document.body } = {}) {
   folders.forEach((folder) => {
     const cell = document.createElement("div");
     cell.innerHTML =  `
+      <a href="${folder}" class="framify__cell-link" target="_blank" rel="noopener noreferrer">🔗</a>
       <iframe src="${folder}"></iframe>
     `;
     cell.classList.add("framify__cell");
@@ -51,7 +52,7 @@ function framify(folders = window.links, { parent = document.body } = {}) {
   }
 
   function fullscreen(cell, isFullscreen) {
-    if(window.matchMedia("(max-width: 768px)").matches) return;
+    if (window.matchMedia("(max-width: 768px)").matches) return;
 
     isFullscreen = cell.classList.toggle("fullscreen", isFullscreen);
 
