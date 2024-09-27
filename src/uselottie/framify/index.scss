@@ -10,6 +10,12 @@
   }
 }
 
+@mixin istouch {
+  @media (pointer: coarse) {
+    @content;
+  }
+}
+
 @mixin hover {
   @include ismouse {
     &:hover {
@@ -93,12 +99,12 @@
         @include link-visible;
       }
 
-      @include mobile {
+      @include istouch {
         @include link-visible;
       }
     }
 
-    @include mobile {
+    @include istouch {
       @include shadow;
     }
 
@@ -106,8 +112,9 @@
       @include shadow;
     }
 
-    .fullscreen ~ & {
-      display: none;
+    :has(.fullscreen) > &:not(.fullscreen) {
+      visibility: hidden;
+      opacity: 0;
     }
 
     &.fullscreen {
