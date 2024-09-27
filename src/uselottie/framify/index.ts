@@ -86,8 +86,7 @@ export default function framify(
   function fullscreen(cell?: Element | null, isFullscreen?: boolean) {
     if (!cell) return;
 
-    // console.log(window.matchMedia("pointer: fine").matches);
-    // if (window.matchMedia("pointer: fine").matches) return;
+    if(window.matchMedia("(pointer:coarse)").matches) return;
 
     isFullscreen = cell.classList.toggle("fullscreen", isFullscreen);
 
