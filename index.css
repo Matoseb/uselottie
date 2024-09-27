@@ -14,7 +14,7 @@ body {
 }.framify {
   position: relative;
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(20vmax, 1fr));
+  grid-template-columns: repeat(auto-fit, minmax(16rem, 1fr));
   padding: 1rem;
   gap: 1rem;
   box-sizing: border-box;
