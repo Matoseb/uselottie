@@ -15,7 +15,7 @@
 
   position: relative;
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(20vmax, 1fr));
+  grid-template-columns: repeat(auto-fit, minmax(16rem, 1fr));
   padding: $gap;
   gap: $gap;
   box-sizing: border-box;
