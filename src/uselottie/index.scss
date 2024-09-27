@@ -5,9 +5,9 @@ svg.lottie-controller {
   -webkit-tap-highlight-color: transparent;
   -webkit-touch-callout: none;
   overflow: visible;
-  
+
   pointer-events: none;
-  
+
   > * {
     pointer-events: auto;
   }
@@ -28,8 +28,21 @@ svg.lottie-controller {
     pointer-events: none;
   }
 
-  .click {
+  .click,
+  .hitbox {
     pointer-events: auto;
     cursor: pointer;
+  }
+
+  .hitbox * {
+    stroke: transparent;
+    fill: transparent;
+  }
+
+  .noscale {
+    [stroke] {
+      vector-effect: non-scaling-stroke;
+      // stroke-width: var(--stroke-width, revert-layer);
+    }
   }
 }
