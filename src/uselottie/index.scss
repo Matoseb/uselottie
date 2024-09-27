@@ -5,8 +5,15 @@ svg.lottie-controller {
   -webkit-tap-highlight-color: transparent;
   -webkit-touch-callout: none;
   overflow: visible;
+  
+  pointer-events: none;
+  
+  > * {
+    pointer-events: auto;
+  }
 
-  > g[clip-path] {
+  > g[clip-path],
+  .overflow {
     clip-path: unset;
   }
 
@@ -15,5 +22,14 @@ svg.lottie-controller {
     box-sizing: border-box;
     user-select: none;
     -webkit-user-select: none;
+  }
+
+  .noclick {
+    pointer-events: none;
+  }
+
+  .click {
+    pointer-events: auto;
+    cursor: pointer;
   }
 }
