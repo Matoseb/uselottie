@@ -83,19 +83,15 @@ export default class LottieController {
     this.volumeVariation = volumeVariation;
     this.rateVariation = rateVariation;
 
-    if(addCSS)
-      injectCSS("lottie-controller", styleContent);
+    if (addCSS) injectCSS("lottie-controller", styleContent);
 
     this.container =
       typeof options.container === "string"
         ? (() => {
             const elem = getElem(options.container);
             if (!elem) {
-              this.log(
-                `Element not found`,
-                MESSAGE.error
-              )(options.container);
-              throw new Error('Element not found:' + options.container);
+              this.log(`Element not found`, MESSAGE.error)(options.container);
+              throw new Error("Element not found:" + options.container);
             }
             return elem;
           })()
@@ -150,11 +146,11 @@ export default class LottieController {
     });
 
     this.player.addEventListener("complete", () => {
-      this.log("complete", MESSAGE.event)(this.animation);
+      this.log("complete", MESSAGE.event)();
     });
 
     this.player.addEventListener("loopComplete", () => {
-      this.log("loopComplete", MESSAGE.event)(this.animation);
+      this.log("loopComplete", MESSAGE.event)();
     });
 
     let oldFrame = Infinity;
@@ -171,11 +167,11 @@ export default class LottieController {
 
         if (st <= frame && st > oldFrame) {
           const rate = this.rateVariation * 0.5;
-          audio.manualRate(random(1 - rate, 1 + rate));
-          audio.manualVolume(random(1 - this.volumeVariation, 1));
-          const event = { audios, audio, data, willPlay: true } as BMAudioEvent;
+          audio.manualRate?.(random(1 - rate, 1 + rate));
+          audio.manualVolume?.(random(1 - this.volumeVariation, 1));
+          const event = { audios, audio, data, prevent: false } as BMAudioEvent;
           this.player.triggerEvent("audio", event);
-          if (event.willPlay) audio.manualPlay();
+          if (event.prevent !== true) audio.manualPlay?.();
         }
       });
 
@@ -213,12 +209,23 @@ export default class LottieController {
     this.player.loop = false;
 
     this.setAnimation(animation);
-    this.log("seek", MESSAGE.action)(this.animation, position);
 
-    return seekAnimation(this.player, animation, position, isFrame);
+    const result = seekAnimation(this.player, animation, position, isFrame);
+
+    this.log("seek", MESSAGE.action)({ position });
+
+    return result;
   };
+
   getAnimation = () => {
     return this.animation;
+  };
+
+  getInfos = () => {
+    return {
+      animation: this.animation,
+      currentFrame: this.player.currentFrame,
+    };
   };
 
   setAnimation = (anim: AnimationValue = null) => {
@@ -239,7 +246,9 @@ export default class LottieController {
 
     const as = LOGTYPES[messageType || MESSAGE.default];
     const color = COLORS[messageType || MESSAGE.default];
-    return (...value: any[]) => fancyLog.call({ name, color, as }, ...value);
+    return (...value: any[]) => {
+      fancyLog.call({ name, color, as }, ...value, { ...this.getInfos() });
+    };
   };
 
   play = (
@@ -258,7 +267,7 @@ export default class LottieController {
 
     this.setAnimation(anim);
 
-    this.log("play", MESSAGE.action)(this.animation);
+    this.log("play", MESSAGE.action)();
 
     return playAnimation(this.player, anim, force);
   };

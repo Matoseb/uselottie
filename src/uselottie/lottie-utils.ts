@@ -16,7 +16,7 @@ type Marker = {
     name: string;
   };
   time: number;
-}
+};
 
 export type AnimationValue =
   | string
@@ -28,14 +28,14 @@ export type AnimationValue =
 type AudioControl = {
   audio: LottieAudio;
   data: any;
-}
+};
 
 export type BMAudioEvent = {
   audios: AudioControl[];
   audio: LottieAudio;
   data: any;
-  willPlay: boolean;
-}
+  prevent: boolean;
+};
 
 type CompleteAnimationEventName = "audio" | AnimationEventName;
 
@@ -65,7 +65,7 @@ export type CompleteAnimationItem = AnimationItem & {
       | BMDestroyEvent
       | undefined
   ) => void;
-}
+};
 
 // lottie
 export function getMarker(player: CompleteAnimationItem, name: string) {
@@ -139,17 +139,16 @@ export function seekAnimation(
   position = 1,
   isFrame = true
 ) {
-
-  
   if (Array.isArray(animation) && Array.isArray(animation[0])) {
     // clamp
     const pos = Math.min(1, Math.max(0, position));
     const index = Math.round(pos * (animation.length - 1));
     animation = animation[index];
+  } else if (animation === null) {
+    animation = 0;
   }
 
   const segments = convertSegment(player, animation as AnimationValue);
-
 
   player.goToAndStop(lerpRange(segments, position), isFrame);
 }
