@@ -25,7 +25,7 @@ jobs:
           pnpm run build:pages
 
       - name: Deploy 🚀
-        uses: JamesIves/github-pages-deploy-action@v4
+        uses: JamesIves/github-pages-deploy-action@v4.6.4
         with:
           branch: examples
           folder: dist # The folder the action should deploy.
