@@ -21,8 +21,15 @@
         max-width: 30vmin;
       }
       
+      /* find elements with a stroke attribute */
       [stroke] {
-        stroke-width: 2px;
+        stroke: rgb(121, 131, 137);
+        stroke-width: 8px;
+        transition: stroke 0.3s;
+      }
+
+      svg:hover [stroke] {
+        stroke: rgb(52, 52, 52);
       }
 
     </style>

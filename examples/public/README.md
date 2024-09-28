@@ -1,3 +1,3 @@
 # Examples @matoseb/uselottie
 
-## [Doc](https://ecal-mid.notion.site/CODE-5e4d4b05d8704391972e980f018f0007?pvs=4)
+## [DOCUMENTATION](https://ecal-mid.notion.site/SB1-TOGGLE-140af8c17d8e466fa164e8ed6191168d)

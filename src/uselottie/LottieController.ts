@@ -24,6 +24,8 @@ import {
   CompleteAnimationItem,
 } from "./lottie-utils";
 
+import LottieApi, { AnimationItemAPI } from "lottie-api";
+
 export type LottieControllerConfig = Omit<
   AnimationConfigWithPath,
   "container"
@@ -63,6 +65,7 @@ const LOGTYPES: PartialRecord<MESSAGE, ConsoleType> = {
 export default class LottieController {
   animation: AnimationKey = null;
   container: Element | null = null;
+  api: AnimationItemAPI | null = null;
   player: CompleteAnimationItem;
   debug: boolean = false;
   volumeVariation: number;
@@ -118,6 +121,8 @@ export default class LottieController {
 
       container: this.container,
     }) as unknown as CompleteAnimationItem;
+
+    this.api = LottieApi.createAnimationApi(this.player);
 
     this.player.addEventListener("DOMLoaded", () => {
       const fileName = LottieController.getName(this.player);

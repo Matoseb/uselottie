@@ -8,8 +8,9 @@
     "allowJs": true,
 
     /* Bundler mode */
-    "moduleResolution": "bundler",
+    "moduleResolution": "node",
     "allowImportingTsExtensions": true,
+    "allowSyntheticDefaultImports": true,
     "isolatedModules": true,
     "moduleDetection": "force",
     "noEmit": true,
@@ -21,11 +22,15 @@
     "noFallthroughCasesInSwitch": true,
     // "baseUrl": ".",
 
+    "typeRoots": ["./node_modules/@types", "./src/@types"],
     "paths": {
       "@matoseb/uselottie": ["./src/uselottie"]
     }
   },
   "include": ["**/*.ts", "**/*.js"],
+  // "**/*.d.ts", 
   "exclude": ["build", "node_modules", "dist"]
 }
+
+
 // https://stackoverflow.com/questions/70072923/why-does-vscode-not-pick-up-path-aliases-in-tsconfig
