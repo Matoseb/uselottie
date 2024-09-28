@@ -13,8 +13,8 @@ const controller = useLottie({
   container: ".lottie",
   path: "/animations/heart/data.json",
   debug: true,
-  rateVariation: 0.2,
-  volumeVariation: 0.2,
+  rateVariation: 0.1,
+  volumeVariation: 0.1,
 });
 
 const { onLoad, onComplete, seek, play, isPlaying, getElem } = controller;
