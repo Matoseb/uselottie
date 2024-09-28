@@ -125,7 +125,7 @@ export default class LottieController {
     this.api = LottieApi.createAnimationApi(this.player);
 
     this.player.addEventListener("DOMLoaded", () => {
-      const fileName = LottieController.getName(this.player);
+      const fileName = this.getName();
       document.title = firstCap(fileName);
 
       this.log(
@@ -277,19 +277,19 @@ export default class LottieController {
     return playAnimation(this.player, anim, force);
   };
 
-  destroy = () => {
-    this.player.destroy();
-  };
+  getName = () => {
+    const { fileName, path = "" } = this.player;
 
-  static getName(player: CompleteAnimationItem) {
-    let { fileName, path = "" } = player;
-    // console.log(path, fileName);
     if (!fileName || fileName === "data") {
       return path.split("/").filter(Boolean).pop() || "untitled";
     }
 
     return fileName;
-  }
+  };
+
+  destroy = () => {
+    this.player.destroy();
+  };
 
   static getAnimationKey(anim: AnimationValue = null): AnimationKey {
     if (anim === null || anim === undefined) return null;
