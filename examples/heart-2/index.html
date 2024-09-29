@@ -26,8 +26,12 @@
         cursor: pointer;
       }
 
-      [data-animation*="active-release-end"] .heart:hover {
-        opacity: 0.8;
+      .lottie-controller {
+        transition: opacity 0.3s;
+      }
+
+      .lottie-controller[data-playing="false"]:hover {
+        opacity: 0.7;
       }
     </style>
   </head>

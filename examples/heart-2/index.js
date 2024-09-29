@@ -19,7 +19,8 @@ const { onLoad, onComplete, seek, play, isPlaying, getElem, player } =
   controller;
 
 onLoad(() => {
-  getElem(".heart").onpointerdown = () => {
+
+  getElem().onpointerdown = () => {
     if (isPlaying(ACTION.release)) return;
     play(ACTION.holding);
   };

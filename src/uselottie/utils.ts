@@ -85,3 +85,7 @@ export function injectCSS(name: string, styleContent = "") {
 
   style.innerHTML = styleContent;
 }
+
+export function stringify(obj: unknown) {
+  return typeof obj === "string" ? obj : JSON.stringify(obj);
+}

@@ -14,6 +14,7 @@ import {
   noFunc,
   ConsoleType,
   injectCSS,
+  stringify,
 } from "./utils";
 
 import {
@@ -154,6 +155,7 @@ export default class LottieController {
     });
 
     this.player.addEventListener("complete", () => {
+      this.setAttr("data-playing", false);
       this.log("complete", MESSAGE.event)();
     });
 
@@ -165,7 +167,11 @@ export default class LottieController {
 
     this.player.addEventListener("enterFrame", (event) => {
       if (event.direction !== 1) return;
-      if (this.player.isPaused) return;
+
+      const playing = this.isPlaying();
+      this.setAttr("data-playing", playing);
+
+      if (!playing) return;
 
       const { audios } = this.player.audioController || { audios: [] };
       const frame = this.player.firstFrame + this.player.currentFrame;
@@ -207,6 +213,7 @@ export default class LottieController {
     return getElems(selector, parent || undefined);
   };
   isPlaying = (...possibleAnimations: AnimationValue[]) => {
+    if (possibleAnimations.length === 0) return !this.player.isPaused;
     const keys = possibleAnimations.map(LottieController.getAnimationKey);
     return this.animation !== null && keys.includes(this.animation);
   };
@@ -239,15 +246,19 @@ export default class LottieController {
 
   setAnimation = (anim: AnimationValue = null) => {
     this.animation = LottieController.getAnimationKey(anim);
+    this.setAttr("data-animation", this.animation);
+  };
 
+  setAttr = (key: string, value: any = "") => {
     const container = this.getElem() as HTMLElement;
+
     if (!container) return;
 
-    if (this.animation === null) {
-      container.removeAttribute("data-animation");
+    if (value === null) {
+      container.removeAttribute(key);
       return;
     }
-    container.setAttribute("data-animation", this.animation);
+    container.setAttribute(key, stringify(value));
   };
 
   log = (name?: string, messageType?: MESSAGE) => {
@@ -299,7 +310,7 @@ export default class LottieController {
 
   static getAnimationKey(anim: AnimationValue = null): AnimationKey {
     if (anim === null || anim === undefined) return null;
-    return typeof anim === "string" ? anim : JSON.stringify(anim);
+    return stringify(anim);
   }
 
   static buildFilterSize(spread: number | number[]) {
