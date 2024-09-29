@@ -17,7 +17,12 @@ function getHtmlEntries(root = IN_DIR) {
   const entries = {};
 
   const files = fs.readdirSync(pagesDir, { recursive: true });
-  const htmlFiles = files.filter((file) => file.endsWith(".html"));
+  const htmlFiles = files.filter((file) => {
+    // ignore public folder
+    if (file.startsWith("public")) return false;
+    
+    return file.endsWith(".html");
+  });
 
   htmlFiles.forEach((file) => {
     // let name = file.replaceAll("/", "-");
