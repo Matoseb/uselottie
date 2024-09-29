@@ -4,6 +4,9 @@ import tinycolor from "tinycolor2";
 export function isIOS() {
   return /iPad|iPhone|iPod/.test(navigator.userAgent);
 }
+export function isTouch() {
+  return window.matchMedia("(pointer: coarse)").matches;
+}
 
 // fallbacks
 export const noFunc = () => {};

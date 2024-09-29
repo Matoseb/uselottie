@@ -1,6 +1,7 @@
 import lottie, { AnimationConfigWithPath, SVGRendererConfig } from "lottie-web";
 import LottieAudio, { LottieAudioOptions } from "./LottieAudio";
 import styleContent from "./index.scss?inline";
+import useHover from "./useHover";
 
 import {
   getElem,
@@ -40,7 +41,6 @@ export type LottieControllerConfig = Omit<
   filterSpread?: number | number[];
 };
 
-type Callback = (event: any) => void;
 type AnimationKey = string | null;
 
 enum MESSAGE {
@@ -68,6 +68,7 @@ export default class LottieController {
   container: Element | null = null;
   api: AnimationItemAPI | null = null;
   name: string = "";
+  stopHover: Callback | undefined;
   player: CompleteAnimationItem;
   debug: boolean = false;
   volumeVariation: number;
@@ -139,6 +140,10 @@ export default class LottieController {
 
       const container = this.getElem() as HTMLElement;
       if (!container) return;
+
+      this.stopHover = useHover((canHover) => {
+        this.setAttr("can-hover", canHover, true);
+      });
 
       // Disable right click
       container.dataset.filename = this.name;
@@ -252,10 +257,14 @@ export default class LottieController {
     this.setAttr("data-animation", this.animation);
   };
 
-  setAttr = (key: string, value: any = "") => {
+  setAttr = (key: string, value: any = "", modeNoValue = false) => {
     const container = this.getElem() as HTMLElement;
 
     if (!container) return;
+
+    if (modeNoValue) {
+      value = Boolean(value) ? "" : null;
+    }
 
     if (value === null) {
       container.removeAttribute(key);
@@ -309,6 +318,7 @@ export default class LottieController {
 
   destroy = () => {
     this.player.destroy();
+    this.stopHover?.();
   };
 
   static getAnimationKey(anim: AnimationValue = null): AnimationKey {
