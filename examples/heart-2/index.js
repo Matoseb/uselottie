@@ -19,7 +19,6 @@ const { onLoad, onComplete, seek, play, isPlaying, getElem, player } =
   controller;
 
 onLoad(() => {
-
   getElem().onpointerdown = () => {
     if (isPlaying(ACTION.release)) return;
     play(ACTION.holding);
@@ -32,4 +31,8 @@ onLoad(() => {
       play(ACTION.off);
     }
   };
+});
+
+onComplete(() => {
+  if (isPlaying(ACTION.off)) seek("start");
 });
