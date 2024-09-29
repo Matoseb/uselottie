@@ -66,6 +66,7 @@ export default class LottieController {
   animation: AnimationKey = null;
   container: Element | null = null;
   api: AnimationItemAPI | null = null;
+  name: string = "";
   player: CompleteAnimationItem;
   debug: boolean = false;
   volumeVariation: number;
@@ -76,6 +77,7 @@ export default class LottieController {
       debug = false,
       injectCSS: addCSS = true,
       volumeVariation = 0,
+      name = "",
       rateVariation = 0,
       filterSpread = 0.5,
       howlerOptions = {},
@@ -85,6 +87,7 @@ export default class LottieController {
     this.debug = debug;
     this.volumeVariation = volumeVariation;
     this.rateVariation = rateVariation;
+    this.name = name;
 
     if (addCSS) injectCSS("lottie-controller", styleContent);
 
@@ -125,8 +128,8 @@ export default class LottieController {
     this.api = LottieApi.createAnimationApi(this.player);
 
     this.player.addEventListener("DOMLoaded", () => {
-      const fileName = this.getName();
-      document.title = firstCap(fileName);
+      this.name = this.getName();
+      document.title = firstCap(this.name);
 
       this.log(
         "DOMLoaded",
@@ -137,7 +140,7 @@ export default class LottieController {
       if (!container) return;
 
       // Disable right click
-      container.dataset.filename = fileName;
+      container.dataset.filename = this.name;
       container.classList.add("lottie-controller");
       container.addEventListener(
         "contextmenu",
@@ -212,6 +215,7 @@ export default class LottieController {
   };
   seek = (animation: AnimationValue, { position = 0, isFrame = true } = {}) => {
     this.player.loop = false;
+    this.player.resetSegments(true);
 
     this.setAnimation(animation);
 
@@ -279,6 +283,8 @@ export default class LottieController {
 
   getName = () => {
     const { fileName, path = "" } = this.player;
+
+    if (this.name) return this.name;
 
     if (!fileName || fileName === "data") {
       return path.split("/").filter(Boolean).pop() || "untitled";
