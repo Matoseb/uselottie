@@ -199,6 +199,9 @@ export default class LottieController {
   onLoad = (callback: Callback) => {
     return this.player.addEventListener("DOMLoaded", callback);
   };
+  onLoopComplete = (callback: Callback) => {
+    return this.player.addEventListener("loopComplete", callback);
+  };
   onAudio = (callback: Callback) => {
     return this.player.addEventListener("audio", callback);
   };

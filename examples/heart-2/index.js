@@ -15,7 +15,7 @@ const controller = useLottie({
   volumeVariation: 0.1,
 });
 
-const { onLoad, onComplete, seek, play, isPlaying, getElem, player } =
+const { onLoad, onComplete, seek, play, isPlaying, getElem } =
   controller;
 
 onLoad(() => {
