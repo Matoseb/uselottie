@@ -1,23 +1,26 @@
 import useLottie from "@matoseb/uselottie";
 
+// Define states
 const ACTION = {
-  holding: "start, hold",
-  release: "hold, release-end",
-  off: "off-start, off-end",
+  holding: "start, hold",      // Pointer down
+  release: "hold, release-end", // Pointer up
+  off: "off-start, off-end",   // Animation reset
 };
 
+// Initialize Lottie controller
 const controller = useLottie({
-  container: ".lottie",
-  name: "Heart 2",
-  path: "/animations/heart-explode/data.json",
-  debug: true,
-  rateVariation: 0.1,
-  volumeVariation: 0.1,
+  container: ".lottie", // Search <div class="lottie"></div>
+  name: "Heart 2",      // Animation name
+  path: "/animations/heart-explode/data.json", // Path to data.json
+  debug: true,          // Enable debug messages
+  rateVariation: 0.1,   // Audio pitch variation
+  volumeVariation: 0.1, // Audio volume variation
 });
 
-const { onLoad, onComplete, seek, play, isPlaying, getElem } =
-  controller;
+// Destructure controller methods
+const { onLoad, onComplete, seek, play, isPlaying, getElem } = controller;
 
+// setup
 onLoad(() => {
   getElem().onpointerdown = () => {
     if (isPlaying(ACTION.release)) return;
@@ -33,6 +36,7 @@ onLoad(() => {
   };
 });
 
+// events
 onComplete(() => {
-  if (isPlaying(ACTION.off)) seek("start");
+  if (isPlaying(ACTION.off)) seek("start"); // Reset to start if 'off'
 });

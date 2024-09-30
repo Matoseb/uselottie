@@ -79,6 +79,7 @@ export default defineConfig({
       plugins: [
         cleanup({
           maxEmptyLines: 1,
+          comments: "all",
         }),
       ],
     },
