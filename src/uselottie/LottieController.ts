@@ -270,7 +270,7 @@ export default class LottieController {
       normalize = true,
       clamp = false,
     }: {
-      inside?: boolean;
+      viewbox?: boolean;
       selector?: string | null;
       normalize?: boolean;
       clamp?: boolean;
@@ -283,7 +283,7 @@ export default class LottieController {
 
     // check if element is a svg, or path, or ...
     if ("getBBox" in elem && viewbox) {
-      const box = (elem as SVGElement).getBBox();
+      const box = (elem as SVGSVGElement).getBBox();
       ({ x: left, y: top, width, height } = box);
       right = left + width;
       bottom = top + height;
