@@ -33,25 +33,42 @@
   $color-shadow: rgba(158, 160, 162, 0.25);
   $color-link: hsl(212, 100%, 76%);
 
-  position: relative;
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(16rem, 1fr));
-  padding: $gap;
-  gap: $gap;
-  box-sizing: border-box;
+  display: flex;
+  align-items: center;
+  flex-direction: column;
 
-  @include mobile {
+  &__row {
+    position: relative;
     display: flex;
-    flex-direction: column;
+    flex-wrap: wrap;
+    padding: $gap;
+    gap: $gap;
     width: 100%;
+    box-sizing: border-box;
+    justify-content: center;
+
+    // align cells
+
+
+    @include mobile {
+      flex-direction: column;
+      width: 100%;
+    }
   }
 
   &__cell {
     position: relative;
+    align-self: center;
+
     width: 100%;
+    max-width: 16rem;
     aspect-ratio: 1 / 1;
     border-radius: $gap;
     overflow: hidden;
+
+    @include mobile {
+      max-width: 100%;
+    }
 
     @mixin shadow {
       box-shadow: 0 0 10px $color-shadow;
@@ -112,7 +129,7 @@
       @include shadow;
     }
 
-    :has(.fullscreen) > &:not(.fullscreen) {
+    .framify:has(.fullscreen) &:not(.fullscreen) {
       visibility: hidden;
       opacity: 0;
     }
@@ -121,6 +138,8 @@
       position: fixed;
       top: $gap;
       left: $gap;
+      max-width: unset;
+      max-height: unset;
       width: calc(100% - 2 * #{$gap});
       height: calc(100dvh - 2 * #{$gap});
       z-index: 1000;
