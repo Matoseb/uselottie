@@ -40,6 +40,7 @@
     "howler": "^2.2.4",
     "lottie-api": "^1.0.3",
     "lottie-web": "^5.12.2",
+    "referentiel": "3.0.0-alpha",
     "tinycolor2": "^1.6.0"
   },
   "license": "MIT"

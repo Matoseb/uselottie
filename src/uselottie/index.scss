@@ -1,5 +1,19 @@
 /* prevent zoom */
 
+@mixin svgElem {
+  [stroke],
+  path,
+  circle,
+  ellipse,
+  rect,
+  polygon,
+  line,
+  text,
+  polyline {
+    @content;
+  }
+}
+
 svg.lottie-controller {
   -webkit-tap-highlight-color: rgba(0, 0, 0, 0);
   -webkit-tap-highlight-color: transparent;
@@ -40,8 +54,15 @@ svg.lottie-controller {
   }
 
   .noscale {
-    [stroke] {
+    @include svgElem {
       vector-effect: non-scaling-stroke;
+      // stroke-width: var(--stroke-width, revert-layer);
+    }
+  }
+
+  .scale {
+    @include svgElem {
+      vector-effect: unset;
       // stroke-width: var(--stroke-width, revert-layer);
     }
   }

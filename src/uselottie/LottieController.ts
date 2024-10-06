@@ -2,6 +2,7 @@ import lottie, { AnimationConfigWithPath, SVGRendererConfig } from "lottie-web";
 import LottieAudio, { LottieAudioOptions } from "./LottieAudio";
 import styleContent from "./index.scss?inline";
 import useHover from "./useHover";
+import { Referentiel } from "referentiel";
 
 import {
   getElem,
@@ -15,6 +16,7 @@ import {
   noFunc,
   ConsoleType,
   injectCSS,
+  clamp as clampNumber,
   stringify,
 } from "./utils";
 
@@ -27,6 +29,8 @@ import {
 } from "./lottie-utils";
 
 import LottieApi, { AnimationItemAPI } from "lottie-api";
+
+const convertPoint = Referentiel.convertPointFromPageToNode;
 
 export type LottieControllerConfig = Omit<
   AnimationConfigWithPath,
@@ -255,6 +259,66 @@ export default class LottieController {
   setAnimation = (anim: AnimationValue = null) => {
     this.animation = LottieController.getAnimationKey(anim);
     this.setAttr("data-animation", this.animation);
+  };
+
+  getPoint = (
+    x: number, // pageX
+    y: number, // pageY
+    {
+      viewbox = false,
+      selector = null,
+      normalize = true,
+      clamp = false,
+    }: {
+      inside?: boolean;
+      selector?: string | null;
+      normalize?: boolean;
+      clamp?: boolean;
+    } = {}
+  ) => {
+    const elem = this.getElem(selector);
+    if (!elem) return null;
+
+    let width, height, top, left, right, bottom;
+
+    // check if element is a svg, or path, or ...
+    if ("getBBox" in elem && viewbox) {
+      const box = (elem as SVGElement).getBBox();
+      ({ x: left, y: top, width, height } = box);
+      right = left + width;
+      bottom = top + height;
+    } else {
+      ({ top, left, width, height, right, bottom } =
+        elem.getBoundingClientRect());
+    }
+
+    if (!viewbox) {
+      x -= left;
+      y -= top;
+    } else {
+      [x, y] = convertPoint(elem, [x, y]);
+    }
+
+    if (clamp) {
+      x = clampNumber(x, 0, width);
+      y = clampNumber(y, 0, height);
+    }
+
+    if (normalize) {
+      x /= width;
+      y /= height;
+    }
+
+    return {
+      top,
+      left,
+      width,
+      height,
+      right,
+      bottom,
+      x,
+      y,
+    };
   };
 
   setAttr = (key: string, value: any = "", modeNoValue = false) => {
