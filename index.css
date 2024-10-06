@@ -10,6 +10,5 @@ body {
 
 .framify {
   flex: 0 1 auto;
-  min-width: 80%;
-  max-width: 100%;
+  width: 100%;
 }
