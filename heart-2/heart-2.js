@@ -9,8 +9,8 @@ const ACTION = {
 
 // Initialize Lottie controller
 const controller = useLottie({
-  container: ".lottie", // Search <div class="lottie"></div>
   name: "Heart 2",      // Animation name
+  container: ".lottie", // Search <div class="lottie"></div>
   path: "/animations/heart-explode/data.json", // Path to data.json
   debug: true,          // Enable debug messages
   rateVariation: 0.1,   // Audio pitch variation
@@ -27,7 +27,7 @@ onLoad(() => {
     play(ACTION.holding);
   };
 
-  window.onpointerup = () => {
+  getElem().onpointerup = () => {
     if (isPlaying(ACTION.holding)) {
       play(ACTION.release);
     } else if (isPlaying(ACTION.release)) {
