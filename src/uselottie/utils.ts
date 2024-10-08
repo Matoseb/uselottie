@@ -26,8 +26,29 @@ export function getElems(
 }
 
 // math
-export function random(min: number, max: number) {
-  return Math.random() * (max - min) + min;
+// #region dependencies for random ----------
+
+function isNumber(elem: any): boolean {
+  return !(isNaN(elem) || elem === null);
+}
+
+// #endregion ----------
+
+export function random(a?: number | object | any[], b?: number): number | any {
+  if (arguments.length === 1) {
+    if (Array.isArray(a)) {
+      const index = Math.floor(random(a.length));
+      return a[index];
+    } else if (typeof a === "object") {
+      return random(Object.values(a));
+    } else if (isNumber(a)) {
+      return Math.random() * (a as number);
+    }
+  } else if (arguments.length === 0) {
+    return Math.random();
+  }
+
+  return Math.random() * ((b as number) - (a as number)) + (a as number);
 }
 
 export function clamp(value: number, min: number = 0, max: number = 1) {

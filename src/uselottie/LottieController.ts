@@ -8,7 +8,7 @@ import {
   getElem,
   getElems,
   firstCap,
-  random,
+  random as mathRandom,
   isIOS,
   toPercent,
   fancyLog,
@@ -75,6 +75,7 @@ export default class LottieController {
   stopHover: Callback | undefined;
   player: CompleteAnimationItem;
   debug: boolean = false;
+  animVariation: number | boolean = false;
   volumeVariation: number;
   rateVariation: number;
 
@@ -190,8 +191,8 @@ export default class LottieController {
 
         if (st <= frame && st > oldFrame) {
           const rate = this.rateVariation * 0.5;
-          audio.manualRate?.(random(1 - rate, 1 + rate));
-          audio.manualVolume?.(random(1 - this.volumeVariation, 1));
+          audio.manualRate?.(mathRandom(1 - rate, 1 + rate));
+          audio.manualVolume?.(mathRandom(1 - this.volumeVariation, 1));
           const event = { audios, audio, data, prevent: false } as BMAudioEvent;
           this.player.triggerEvent("audio", event);
           if (event.prevent !== true) audio.manualPlay?.();
@@ -201,6 +202,12 @@ export default class LottieController {
       oldFrame = frame;
     });
   }
+
+  random = mathRandom;
+
+  setAnimVariation = (value: number | boolean = false) => {
+    return (this.animVariation = value);
+  };
 
   onComplete = (callback: Callback) => {
     return this.player.addEventListener("complete", callback);
@@ -232,11 +239,24 @@ export default class LottieController {
   currentAnimation = () => {
     return this.animation;
   };
+
+  private handleAnimVariation = (animation?: AnimationValue) => {
+    if (!animation) return animation;
+    if (!Array.isArray(animation)) return animation;
+    if (this.animVariation === false) return animation;
+
+    return animation[
+      clampNumber(Number(this.animVariation), 0, animation.length)
+    ];
+  };
+
   seek = (animation: AnimationValue, { position = 0, isFrame = true } = {}) => {
     this.player.loop = false;
     this.player.resetSegments(true);
 
     this.setAnimation(animation);
+
+    animation = this.handleAnimVariation(animation) as AnimationValue;
 
     const result = seekAnimation(this.player, animation, position, isFrame);
 
@@ -347,25 +367,30 @@ export default class LottieController {
     };
   };
 
+  loop = (loop: boolean) => {
+    this.player.loop = loop;
+  }
+
   play = (
-    anim?: AnimationValue,
+    animation: AnimationValue = 0,
     { isFrame = true, loop = false, smooth = false } = {}
   ) => {
-    const force = !smooth;
 
+    const force = !smooth;
     this.player.loop = loop;
 
-    if (typeof anim === "number") {
+    if (typeof animation === "number") {
       this.setAnimation();
-      this.player.goToAndPlay(anim, isFrame);
+      this.player.goToAndPlay(animation, isFrame);
       return;
     }
 
-    this.setAnimation(anim);
+    this.setAnimation(animation);
+    animation = this.handleAnimVariation(animation) as AnimationValue;
 
     this.log("play", MESSAGE.action)();
 
-    return playAnimation(this.player, anim, force);
+    return playAnimation(this.player, animation, force);
   };
 
   getName = () => {
