@@ -43,6 +43,7 @@ export type CompleteAnimationItem = AnimationItem & {
   markers: Marker[];
   fileName: string;
   path: string;
+  adjustSegment: (segment: AnimationSegment, offset: number) => void;
   audioController?: {
     audios: AudioControl[];
   };
@@ -91,7 +92,8 @@ export function convertSegment(
     return animation as AnimationSegment;
   }
 
-  const addFrame = player.loop ? false : true;
+  let addFrame = player.loop ? false : true;
+
   const frames: number[] = [];
 
   animation

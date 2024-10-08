@@ -368,14 +368,19 @@ export default class LottieController {
   };
 
   loop = (loop: boolean) => {
-    this.player.loop = loop;
-  }
+    const { player } = this;
+    if (player.loop === true && player.loop !== loop && !player.isPaused) {
+      const { firstFrame, totalFrames, currentFrame } = player;
+      // add 1 to the totalFrames to include the last frame
+      player.adjustSegment([firstFrame, totalFrames + firstFrame + 1], currentFrame);
+    }
+    return player.loop = loop;
+  };
 
   play = (
     animation: AnimationValue = 0,
     { isFrame = true, loop = false, smooth = false } = {}
   ) => {
-
     const force = !smooth;
     this.player.loop = loop;
 
