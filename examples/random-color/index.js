@@ -7,14 +7,8 @@ const controller = useLottie({
 });
 
 // Destructure controller methods
-const {
-  onLoad,
-  play,
-  isPlaying,
-  getElem,
-  setAnimVariation,
-  random,
-} = controller;
+const { onLoad, play, isPlaying, getElem, setAnimVariation, random } =
+  controller;
 
 const ACTION = {
   press: "a-1, a-2", // fallback to default
@@ -24,7 +18,6 @@ const ACTION = {
 
 // setup
 onLoad(() => {
-
   getElem().onpointerdown = () => {
     // play(ACTION.release);
     if (isPlaying(ACTION.active)) return;
@@ -33,10 +26,9 @@ onLoad(() => {
 
   getElem().onpointerup = () => {
     if (isPlaying(ACTION.press)) {
-      
       setAnimVariation(random([0, 1, 2])); // pick a random variation
 
-      play(ACTION.active);
+      play(ACTION.active, { smooth: true });
     } else if (isPlaying(ACTION.active)) {
       play(ACTION.release);
     }
