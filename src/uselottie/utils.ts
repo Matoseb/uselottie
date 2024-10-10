@@ -25,6 +25,34 @@ export function getElems(
   return Array.from(parent.querySelectorAll(selector));
 }
 
+export function addListener<K extends keyof WindowEventMap>(
+  event: K,
+  callback: (ev: WindowEventMap[K]) => any,
+  optionsOrCapture?: boolean | AddEventListenerOptions,
+  target: EventTarget = window
+) {
+  target.addEventListener(
+    event,
+    callback as EventListenerOrEventListenerObject,
+    optionsOrCapture
+  );
+
+  return () => {
+    target.removeEventListener(
+      event,
+      callback as EventListenerOrEventListenerObject,
+      optionsOrCapture
+    );
+  };
+}
+export function isIframe() {
+  try {
+    return window.self !== window.top;
+  } catch (e) {
+    return true;
+  }
+}
+
 // math
 // #region dependencies for random ----------
 

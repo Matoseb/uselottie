@@ -1,5 +1,6 @@
 import style from "./index.scss?inline";
-import { injectCSS, firstCap } from "../utils";
+import frameStyle from "./frame.scss?inline";
+import { injectCSS, firstCap, isIframe, addListener, isTouch } from "../utils";
 
 export type FramifyConfig = {
   folders: string[];
@@ -43,21 +44,15 @@ export default function framify(
 
 function isOnLottie(elem?: Element | null) {
   if (!elem) return false;
-  return Boolean(elem.closest("svg > *"));
+
+  // console.log('bro', Boolean(elem.closest("svg > *")))
+  return Boolean(elem.closest("svg"));
 }
 
-function fullscreen(cell?: Element | null, isFullscreen?: boolean) {
-  if (!cell) return;
+function fullscreen(isFullscreen?: boolean) {
+  if (isTouch()) return;
 
-  if (window.matchMedia("(pointer:coarse)").matches) return;
-
-  isFullscreen = cell.classList.toggle("fullscreen", isFullscreen);
-
-  const frame = cell.querySelector("iframe")?.contentWindow;
-  frame?.document.documentElement.style.setProperty(
-    "--cursor",
-    isFullscreen ? "zoom-out" : "zoom-in"
-  );
+  window.top?.postMessage({ type: "fullscreen:request", isFullscreen }, "*");
 }
 
 function addCells(cells: HTMLElement, folders: string[]) {
@@ -80,44 +75,104 @@ function addCells(cells: HTMLElement, folders: string[]) {
     const iframe = cell.querySelector("iframe");
 
     if (!iframe) return;
-    iframe.onload = () => initFrame(iframe, cell);
+
+    // listen to iframe messages
+    addListener(
+      "message",
+      (event) => {
+        // check if message is from the iframe
+        if (event.source !== iframe.contentWindow) return;
+        if (event.data?.type !== "fullscreen:request") return;
+
+        let { isFullscreen } = event.data;
+
+        isFullscreen = cell.classList.toggle("fullscreen", isFullscreen);
+        // reply
+
+        event.source?.postMessage(
+          { type: "fullscreen:confirm", isFullscreen },
+          event.origin
+        );
+      },
+      false
+    );
+
+    // iframe.onload = () => initFrame(iframe, cell);
   });
 }
 
-function initFrame(iframe: HTMLIFrameElement, cell: Element) {
-  fullscreen(cell, false);
+if (isIframe()) {
+  initFrame();
+  injectCSS("framify-cell", frameStyle);
+}
+
+function initFrame() {
+  fullscreen(false);
   let svg = false;
 
-  function handleCursor(event: PointerEvent) {
-    if (!event.view) return;
-    const { style } = event.view.document.body;
-    style.cursor = isOnLottie(event.target as Element) ? "" : `var(--cursor)`;
-  }
+  // function handleCursor(event: PointerEvent) {
+  //   if (!event.view) return;
+  //   // document.body.classList.toggle(
+  //   //   "is-outside",
+  //   //   !isOnLottie(event.target as Element)
+  //   // );
+  // }
 
-  const win = iframe.contentWindow;
-  if (!win) return;
+  // addListener(
+  //   "pointerover",
+  //   (event) => {
+  //     handleCursor(event);
+  //   },
+  //   true
+  // );
 
-  win.onpointerover = function (event) {
-    handleCursor(event);
-  };
-  win.onpointermove = function (event) {
-    handleCursor(event);
-  };
+  addListener(
+    "message",
+    (event) => {
+      if (event.data?.type !== "fullscreen:confirm") return;
+      document.body.classList.toggle("is-fullscreen", event.data.isFullscreen);
+    },
+    true
+  );
 
-  win.onpointerdown = function (event) {
-    svg = isOnLottie(event.target as Element);
-  };
+  // addListener(
+  //   "pointermove",
+  //   (event) => {
+  //     handleCursor(event);
+  //   },
+  //   true
+  // );
 
-  win.onclick = function () {
-    if (!svg) fullscreen(cell);
-  };
+  addListener(
+    "pointerdown",
+    (event) => {
+      svg = isOnLottie(event.target as Element);
+    },
+    true
+  );
+
+  addListener(
+    "click",
+    () => {
+      if (!svg) fullscreen();
+    },
+    true
+  );
 
   // focus out
-  win.onblur = function () {
-    svg = false;
-  };
+  addListener(
+    "blur",
+    () => {
+      svg = false;
+    },
+    true
+  );
 
-  win.onkeydown = function (event) {
-    if (event.key === "Escape") fullscreen(cell, false);
-  };
+  addListener(
+    "keydown",
+    (event) => {
+      if ((event as KeyboardEvent).key === "Escape") fullscreen(false);
+    },
+    true
+  );
 }

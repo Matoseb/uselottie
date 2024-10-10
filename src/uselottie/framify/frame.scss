@@ -1,0 +1,11 @@
+:root {
+  --cursor: zoom-in;
+}
+
+.is-fullscreen {
+  --cursor: zoom-out;
+}
+
+body:has(svg:not(:hover)) {
+  cursor: var(--cursor);
+}
