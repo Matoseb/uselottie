@@ -15,12 +15,17 @@ export type FramifyConfig = {
   options?: {
     parent?: HTMLElement;
     animate?: boolean;
+    interval?: number[];
   };
 };
 
 export default function framify(
   folders: FramifyConfig["folders"],
-  { parent = document.body, animate = false }: FramifyConfig["options"] = {}
+  {
+    parent = document.body,
+    animate = false,
+    interval = [1000, 2000],
+  }: FramifyConfig["options"] = {}
 ) {
   injectCSS("framify", style);
   const container = document.createElement("div");
@@ -51,15 +56,15 @@ export default function framify(
   parent.appendChild(container);
 
   // trigger animate
-  if (animate) sendAnimate();
+  if (animate) sendAnimate(interval);
 }
 
-async function sendAnimate() {
+async function sendAnimate(interval: number[]) {
   const frames = document.querySelectorAll("iframe");
   const randomFrame = random(frames);
   randomFrame.contentWindow?.postMessage({ type: "animate" }, "*");
-  await delay(random(1000, 2000));
-  sendAnimate();
+  await delay(random(interval));
+  sendAnimate(interval);
 }
 
 function isOnLottie(elem?: Element | null) {
@@ -214,15 +219,20 @@ function trigger(elem: Element | null, name: string) {
   elem?.dispatchEvent(new MouseEvent(name, { bubbles: true }));
 }
 
+let playing = false;
 async function triggerSequence() {
+  if (playing) return;
+
   const isFullscreen = document.body.classList.contains("is-fullscreen");
   if (isFullscreen) return;
 
+  playing = true;
   const elem = document.querySelector("svg path");
 
   await triggerClick(elem);
   await delay(random(2000, 4000));
   await triggerClick(elem);
+  playing = false;
 }
 
 async function triggerClick(elem: Element | null) {
