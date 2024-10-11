@@ -125,9 +125,9 @@ if (isIframe()) {
   injectCSS("framify-cell", frameStyle);
 }
 
-async function initAnim() {
-  triggerSequence();
-}
+// async function initAnim() {
+//   triggerSequence();
+// }
 
 function initFrame() {
   fullscreen(false);
