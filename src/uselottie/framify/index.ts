@@ -54,17 +54,17 @@ export default function framify(
 
   container.appendChild(rowsEl);
   parent.appendChild(container);
-
+  
   // trigger animate
-  if (animate) sendAnimate(interval);
+  if (animate) sendAnimate(container, interval);
 }
 
-async function sendAnimate(interval: number[]) {
-  const frames = document.querySelectorAll("iframe");
+async function sendAnimate(container: HTMLElement, interval: number[]) {
+  const frames = container.querySelectorAll("iframe");
   const randomFrame = random(frames);
   randomFrame.contentWindow?.postMessage({ type: "animate" }, "*");
   await delay(random(interval));
-  sendAnimate(interval);
+  sendAnimate(container, interval);
 }
 
 function isOnLottie(elem?: Element | null) {
