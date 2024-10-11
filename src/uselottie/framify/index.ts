@@ -1,6 +1,14 @@
 import style from "./index.scss?inline";
 import frameStyle from "./frame.scss?inline";
-import { injectCSS, firstCap, isIframe, addListener, isTouch } from "../utils";
+import {
+  injectCSS,
+  firstCap,
+  isIframe,
+  addListener,
+  isTouch,
+  delay,
+  random,
+} from "../utils";
 
 export type FramifyConfig = {
   folders: string[];
@@ -40,6 +48,17 @@ export default function framify(
 
   container.appendChild(rowsEl);
   parent.appendChild(container);
+
+  // trigger animate
+  sendAnimate();
+}
+
+async function sendAnimate() {
+  const frames = document.querySelectorAll("iframe");
+  const randomFrame = random(frames);
+  randomFrame.contentWindow?.postMessage({ type: "animate" }, "*");
+  await delay(random(1000, 2000));
+  sendAnimate();
 }
 
 function isOnLottie(elem?: Element | null) {
@@ -106,6 +125,10 @@ if (isIframe()) {
   injectCSS("framify-cell", frameStyle);
 }
 
+async function initAnim() {
+  triggerSequence();
+}
+
 function initFrame() {
   fullscreen(false);
   let svg = false;
@@ -129,8 +152,12 @@ function initFrame() {
   addListener(
     "message",
     (event) => {
-      if (event.data?.type !== "fullscreen:confirm") return;
-      document.body.classList.toggle("is-fullscreen", event.data.isFullscreen);
+      if (event.data?.type === "animate") {
+        triggerSequence();
+      } else if (event.data?.type === "fullscreen:confirm") {
+        const isFullscreen = event.data.isFullscreen;
+        document.body.classList.toggle("is-fullscreen", isFullscreen);
+      }
     },
     true
   );
@@ -153,7 +180,8 @@ function initFrame() {
 
   addListener(
     "click",
-    () => {
+    (event) => {
+      if (!event.isTrusted) return;
       if (!svg) fullscreen();
     },
     true
@@ -175,4 +203,37 @@ function initFrame() {
     },
     true
   );
+}
+
+function trigger(elem: Element | null, name: string) {
+  // check if self window as an iframe is out of focus
+  if (document.hasFocus()) return;
+
+  // console.log("trigger", name, elem);
+  elem?.dispatchEvent(new MouseEvent(name, { bubbles: true }));
+}
+
+async function triggerSequence() {
+  const isFullscreen = document.body.classList.contains("is-fullscreen");
+  if (isFullscreen) return;
+
+  const elem = document.querySelector("svg path");
+
+  await triggerClick(elem);
+  await delay(random(2000, 4000));
+  await triggerClick(elem);
+}
+
+async function triggerClick(elem: Element | null) {
+  if (!elem) return;
+  // trigger pointerdown/mousedown
+  trigger(elem, "pointerdown");
+  trigger(elem, "mousedown");
+  await delay(random(400, 1000));
+
+  trigger(elem, "pointerup");
+  trigger(elem, "mouseup");
+
+  await delay(random(800, 1000));
+  trigger(elem, "click");
 }

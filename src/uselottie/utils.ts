@@ -60,6 +60,12 @@ function isNumber(elem: any): boolean {
   return !(isNaN(elem) || elem === null);
 }
 
+export function delay(ms: number) {
+  return new Promise((resolve) => {
+    setTimeout(resolve, ms);
+  });
+}
+
 // #endregion ----------
 
 export function random(a?: number | object | any[], b?: number): number | any {
