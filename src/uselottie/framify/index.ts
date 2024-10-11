@@ -14,12 +14,13 @@ export type FramifyConfig = {
   folders: string[];
   options?: {
     parent?: HTMLElement;
+    animate?: boolean;
   };
 };
 
 export default function framify(
   folders: FramifyConfig["folders"],
-  { parent = document.body }: FramifyConfig["options"] = {}
+  { parent = document.body, animate = false }: FramifyConfig["options"] = {}
 ) {
   injectCSS("framify", style);
   const container = document.createElement("div");
@@ -50,7 +51,7 @@ export default function framify(
   parent.appendChild(container);
 
   // trigger animate
-  sendAnimate();
+  if (animate) sendAnimate();
 }
 
 async function sendAnimate() {
