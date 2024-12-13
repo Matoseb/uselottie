@@ -46,6 +46,7 @@ export function addListener<K extends keyof WindowEventMap>(
   };
 }
 export function isIframe() {
+
   try {
     return window.self !== window.top;
   } catch (e) {

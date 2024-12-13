@@ -54,7 +54,7 @@ export default function framify(
 
   container.appendChild(rowsEl);
   parent.appendChild(container);
-  
+
   // trigger animate
   if (animate) sendAnimate(container, interval);
 }
@@ -126,7 +126,7 @@ function addCells(cells: HTMLElement, folders: string[]) {
   });
 }
 
-if (isIframe()) {
+if (isIframe() && window.location.search.includes("framify=1")) {
   initFrame();
   injectCSS("framify-cell", frameStyle);
 }
